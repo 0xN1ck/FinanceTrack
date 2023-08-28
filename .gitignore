@@ -1,0 +1,95 @@
+# Игнорирование папки .vscode
+.vscode/
+
+# Игнорирование папки .idea в IntelliJ IDEA
+.idea/
+
+# Игнорирование файлов настроек редактора
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+.komodotools/
+.kate-swp
+
+# Игнорирование файлов настроек редактора Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+*.user
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ilk
+*.ncb
+*.sbr
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.libs
+*.scc
+*.tmp
+*.pdb
+*.gpState
+*.gpUser
+
+# Игнорирование файлов конфигурации Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Игнорирование файлов компиляции и сборки
+dist/
+build/
+out/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Игнорирование файлов окружения и настроек
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Игнорирование файлов с данными пользователей
+*.pid
+*.seed
+*.pid.lock
+
+# Игнорирование файлов с кэшем
+*.cache/
+
+# Игнорирование файлов базы данных SQLite
+*.db
+
+# Игнорирование файлов миграций Django
+**/migrations/
+
+# Игнорирование файлов собранной статики Django
+**/staticfiles/
+
+# Игнорирование файлов виртуального окружения Python
+**/venv/
+**/.venv/
+
+# Игнорирование файлов byte-кодов Python
+*.pyc
+*.pyo
+*.pyd
+
+# Игнорирование файлов логов Django
+**/logs/
+
+# Игнорирование файлов отчетов покрытия кода
+.coverage
+.coverage.*
