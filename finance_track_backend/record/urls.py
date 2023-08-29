@@ -7,6 +7,7 @@ urlpatterns = [
     path('tags/', TagsListCreate.as_view()),
     path('deductions/', DeductionsListCreate.as_view()),
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),
+    path('deduction/worker/<int:user>/', DeductionsForWorkerList.as_view()),
     path('assignee/', AssigneesListCreate.as_view()),
     path('week/<int:pk>/', WeeksRetrieveUpdateDestroy.as_view()),
     path('user/', UserList.as_view()),

@@ -40,3 +40,11 @@ class UserList(generics.ListAPIView):
 class UserWorkerList(generics.ListAPIView):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
+    
+    
+class DeductionsForWorkerList(generics.ListAPIView):
+    serializer_class = DeductionsSerializer
+    
+    def get_queryset(self):
+        worker_id = self.kwargs['user']
+        return Deductions.objects.filter(user_id=worker_id)
