@@ -79,8 +79,8 @@ out/
 **/staticfiles/
 
 # Игнорирование файлов виртуального окружения Python
-**/venv/
-**/.venv/
+**/venv_django/
+**/.venv_django/
 
 # Игнорирование файлов byte-кодов Python
 *.pyc

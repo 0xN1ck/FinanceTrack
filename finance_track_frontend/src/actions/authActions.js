@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
 export const login = (email, password) => {
     return (dispatch) => {
@@ -31,3 +32,20 @@ export const logout = () => {
             });
     };
 };
+
+export const isTokenValid = (token) => {
+    if (token) {
+      try {
+        const decodedToken = jwt_decode(token);
+        const currentTime = Date.now() / 1000;
+  
+        if (decodedToken.exp < currentTime) {
+          return false;
+        }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+    return false;
+  };
