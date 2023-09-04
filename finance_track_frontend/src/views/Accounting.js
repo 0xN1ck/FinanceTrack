@@ -30,6 +30,7 @@ import {
 } from "reactstrap";
 // core components
 import Header from "components/Headers/Header.js";
+import EditForm from "components/Forms/EditForm";
 import { useState, useEffect } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import axios from "axios";
@@ -44,6 +45,9 @@ const Accounting = () => {
   const [workers, setWorkers] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
   const [data, setData] = useState([]);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/worker/', {
@@ -85,6 +89,28 @@ const Accounting = () => {
       });
   }
 
+  const handleEdit = (item) => {
+    setSelectedItem(item);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (itemId) => {
+    console.log(itemId);
+    // Выполните запрос к серверу для удаления данных с указанным itemId
+    // Здесь можно добавить логику удаления данных
+  };
+
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+  };
+
+  const handleFormSubmit = (formData) => {
+    console.log(formData);
+    // Выполните запрос к серверу для обновления данных с помощью formData
+    // Здесь можно добавить логику отправки данных на сервер
+    setIsFormOpen(false);
+  };
+
   return (
     <>
       <Header />
@@ -115,7 +141,7 @@ const Accounting = () => {
               <CardHeader className="bg-transparent border-0">
                 <h3 className="mb-0">Вычеты {selectedOption}</h3>
               </CardHeader>
-              <Table className="align-items-center table-flush" responsive>
+              <Table className="align-items-center table-flush"  responsive>
                 <thead className="thead-light">
                   <tr>
                     {/* <th>ID</th> */}
@@ -153,14 +179,10 @@ const Accounting = () => {
                               <i className="fas fa-ellipsis-v" />
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem
-                                onClick={(e) => e.preventDefault()}
-                              >
+                            <DropdownItem onClick={() => handleEdit(item)}>
                                 Изменить
                               </DropdownItem>
-                              <DropdownItem
-                                onClick={(e) => e.preventDefault()}
-                              >
+                              <DropdownItem onClick={() => handleDelete(item.id)}>
                                 Удалить
                               </DropdownItem>
                               {/* <DropdownItem
@@ -184,7 +206,13 @@ const Accounting = () => {
           </div>
         </Row>
       </Container>
-
+      {isFormOpen && (
+        <EditForm
+          item={selectedItem}
+          onClose={handleFormClose}
+          onSubmit={handleFormSubmit}
+        />
+      )}
     </>
   );
 };
