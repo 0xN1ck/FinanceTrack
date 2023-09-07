@@ -58,7 +58,6 @@ const Accounting = () => {
       .then(response => {
         // setWorkers(response.data.map(item => item.username));
         setWorkers(response.data);
-        console.log(response.data)
       })
       .catch(error => {
         console.log(error);
@@ -74,7 +73,6 @@ const Accounting = () => {
       console.log("Работник не найден");
       return; // Выход из функции
     }
-    console.log(workerId);
     axios.get(`http://localhost:8000/api/deduction/worker/${workerId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -82,7 +80,6 @@ const Accounting = () => {
     })
       .then(response => {
         setData(response.data);
-        console.log(response.data);
       })
       .catch(error => {
         console.log(error);
@@ -95,7 +92,6 @@ const Accounting = () => {
   };
 
   const handleDelete = (itemId) => {
-    console.log(itemId);
     // Выполните запрос к серверу для удаления данных с указанным itemId
     // Здесь можно добавить логику удаления данных
   };
@@ -105,9 +101,39 @@ const Accounting = () => {
   };
 
   const handleFormSubmit = (formData) => {
-    console.log(formData);
-    // Выполните запрос к серверу для обновления данных с помощью formData
-    // Здесь можно добавить логику отправки данных на сервер
+    // console.log(formData);
+    axios.put(`http://localhost:8000/api/deduction/${formData.id}/`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+      .then(response => {
+        // Обработка успешного ответа
+        // Обновление таблицы путем выполнения нового запроса для получения обновленных данных
+        const workerId = selectedOption && selectedOption.length > 0
+          ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
+          : null;
+        if (!workerId) {
+          console.log("Работник не найден");
+          return; // Выход из функции
+        }
+        axios.get(`http://localhost:8000/api/deduction/worker/${workerId}/`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+          .then(response => {
+            setData(response.data);
+            // console.log(response.data);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      })
+      .catch(error => {
+        // Обработка ошибки
+        console.log(error);
+      });
     setIsFormOpen(false);
   };
 
@@ -141,15 +167,15 @@ const Accounting = () => {
               <CardHeader className="bg-transparent border-0">
                 <h3 className="mb-0">Вычеты {selectedOption}</h3>
               </CardHeader>
-              <Table className="align-items-center table-flush"  responsive>
+              <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
                     {/* <th>ID</th> */}
                     <th scope="col">Username</th>
                     <th scope="col">Tag</th>
-                    <th scope="col">Cost of Consumables</th>
-                    <th scope="col">Amount of Deposits</th>
-                    <th scope="col">Commission for Deposits</th>
+                    <th scope="col">Сумма расходников</th>
+                    <th scope="col">Сумма пополнения</th>
+                    <th scope="col">Коммисия за пополнения</th>
                     <th scope="col">Assignee</th>
                     <th scope="col">Date</th>
                     <th scope="col" />
@@ -157,7 +183,9 @@ const Accounting = () => {
                 </thead>
                 <tbody>
                   {data && data.length > 0 ? (
-                    data.map((item) => (
+                     data
+                     .sort((a, b) => b.id - a.id) // Сортируем данные по полю id в обратном порядке
+                     .map((item) => (
                       <tr key={item.id}>
                         {/* <td>{item.id}</td> */}
                         <td>{item.user.username}</td>
@@ -179,7 +207,7 @@ const Accounting = () => {
                               <i className="fas fa-ellipsis-v" />
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-arrow" right>
-                            <DropdownItem onClick={() => handleEdit(item)}>
+                              <DropdownItem onClick={() => handleEdit(item)}>
                                 Изменить
                               </DropdownItem>
                               <DropdownItem onClick={() => handleDelete(item.id)}>
