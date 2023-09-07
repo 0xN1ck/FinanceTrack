@@ -24,11 +24,28 @@ class AssigneesSerializer(serializers.ModelSerializer):
 class DeductionsSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     assignee = AssigneesSerializer(read_only=True)
+    tag = TagsSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_superuser=False),     source='user')
+    assignee_id = serializers.SlugRelatedField(slug_field='id', queryset=Assignees.objects.all(), source='assignee')
+    tag_id = serializers.SlugRelatedField(slug_field='id', queryset=Tags.objects.all(), source='tag')
+
     class Meta:
         model = Deductions
         depth = 2
         fields = ('id', 'user', 'tag', 'cost_of_consumables', 'amount_of_deposits', 'commission_for_deposits',
-                  'assignee', 'date')
+                  'assignee', 'date', 'user_id', 'assignee_id', 'tag_id')
+    
+    # user = UserSerializer(read_only=True)
+    # assignee = AssigneesSerializer(read_only=True)
+    # tag = TagsSerializer(read_only=True)
+    # user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_superuser=False))
+    # assignee_id = serializers.SlugRelatedField(slug_field='id', queryset=Assignees.objects.all())
+    # tag_id = serializers.SlugRelatedField(slug_field='id', queryset=Tags.objects.all())
+    # class Meta:
+    #     model = Deductions
+    #     depth = 2
+    #     fields = ('id', 'user', 'tag', 'cost_of_consumables', 'amount_of_deposits', 'commission_for_deposits',
+    #               'assignee', 'date', 'user_id', 'assignee_id', 'tag_id')
 
 
 class WeeksSerializer(serializers.ModelSerializer):
