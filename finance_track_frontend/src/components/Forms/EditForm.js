@@ -1,47 +1,72 @@
+import 
+{ 
+  Button, 
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter, 
+  Form, 
+  FormGroup, 
+  Label, 
+  Input, 
+  Row,
+  Col
+} from "reactstrap";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, Row, Col } from "reactstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import DatePicker from "react-datepicker";
-import moment from "moment";
-import 'moment/locale/ru';
-
-import "react-datepicker/dist/react-datepicker.module.css";
 import { registerLocale } from "react-datepicker";
+import moment from "moment";
+
+import 'moment/locale/ru';
+import "react-datepicker/dist/react-datepicker.module.css";
 import ru from 'date-fns/locale/ru';
 registerLocale('ru', ru)
 
 const CustomDatePicker = ({ selected, onChange }) => {
+  const isValidDate = moment(selected).isValid(); // Проверка на допустимость значения даты
+  const inputContainerStyle = {
+    textAlign: 'center',
+  };
+
   return (
     <DatePicker
-      selected={selected || ''}
+      selected={isValidDate ? selected : null}
       onChange={onChange}
       locale="ru"
+      isClearable
       dateFormat="d MMMM yyyy г., HH:mm:ss"
-      showTimeSelect
-      timeFormat="HH:mm:ss"
-      timeIntervals={1}
-      timeCaption="Время"
       className="form-control"
+      wrapperClassName="form-control"
+      calendarClassName="react-datepicker__input-container"
+      customInput={<input style={inputContainerStyle} />} // Добавленный стиль
+      todayButton="Сегодня"
+      showTimeInput
+      timeInputLabel="Время:"
     />
   );
 };
 
 
-const EditForm = ({ item, onClose, onSubmit }) => {
+const EditForm = ({ item, onClose, onSubmit, isCreateMode }) => {
+  const headerText = isCreateMode ? "Добавить данные" : "Изменение данных";
+  const buttonText = isCreateMode ? "Добавить" : "Сохранить";
+
   const [formData, setFormData] = useState({
-    id: item.id,
+    id: item.id || '',
     user: item.user || '',
     tag: item.tag || '',
     cost_of_consumables: item.cost_of_consumables || '',
     amount_of_deposits: item.amount_of_deposits || '',
     commission_for_deposits: item.commission_for_deposits || '',
     assignee: item.assignee || '',
-    date: item.date || null,
-    user_id: item.user_id,
-    tag_id: item.tag_id,
-    assignee_id: item.assignee_id,
+    date: item.date || '',
+    user_id: item.user_id || '',
+    tag_id: item.tag_id || '',
+    assignee_id: item.assignee_id || '',
   });
+
   const [workers, setWorkers] = useState([]);
   const [tags, setTags] = useState([]);
   const [assignee, setAssignee] = useState([]);
@@ -77,34 +102,10 @@ const EditForm = ({ item, onClose, onSubmit }) => {
     fetchData();
   }, []);
 
-  // const handleChangeDefault = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
-
-  // const handleUserChange = (e) => {
-  //   const selectedWorker = workers.find(item => item.username === e[0]);
-  //   selectedWorker && setFormData({ ...formData, user_id: selectedWorker.id, user: selectedWorker });
-  // };
-
-  // const handleTagChange = (e) => {
-  //   const selectedTag = tags.find(item => item.name === e[0]);
-  //   selectedTag && setFormData({ ...formData, tag_id: selectedTag.id, tag: selectedTag });
-  // };
-
-  // const handleAssigneeChange = (e) => {
-  //   const selectedAssignee = assignee.find(item => item.user.username === e[0]);
-  //   console.log(selectedAssignee)
-  //   selectedAssignee && setFormData({ ...formData, assignee_id: selectedAssignee.id, assignee: selectedAssignee });
-  // };
-
-  // const handleDateChange = (date) => {
-  //   setFormData({ ...formData, date: date });
-  // };
-
   const handleChange = (e, name) => {
     const value = e ? e[0] : ''; // Проверка на undefined
     let updatedData = { ...formData };
-  
+
     switch (name) {
       case 'worker':
         const selectedUser = workers.find(item => item.username === value);
@@ -143,7 +144,7 @@ const EditForm = ({ item, onClose, onSubmit }) => {
         updatedData = { ...updatedData, [e.target.name]: e.target.value };
         break;
     }
-  
+
     setFormData(updatedData);
   };
 
@@ -154,7 +155,7 @@ const EditForm = ({ item, onClose, onSubmit }) => {
 
   return (
     <Modal isOpen={true} toggle={onClose}>
-      <ModalHeader toggle={onClose}>Изменение данных</ModalHeader>
+      <ModalHeader toggle={onClose}>{headerText}</ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>
           <Row>
@@ -242,7 +243,7 @@ const EditForm = ({ item, onClose, onSubmit }) => {
       </ModalBody>
       <ModalFooter>
         <Button color="primary" type="submit" onClick={handleSubmit}>
-          Сохранить
+          {buttonText}
         </Button>
         <Button color="secondary" onClick={onClose}>
           Закрыть

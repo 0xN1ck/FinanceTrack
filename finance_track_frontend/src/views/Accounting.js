@@ -1,39 +1,30 @@
 import {
-  Badge,
   Card,
   CardHeader,
-  CardFooter,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
   Container,
   Row,
-  UncontrolledTooltip,
-  Dropdown,
-  Form,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  ListGroup,
-  ListGroupItem,
   Button,
   Col,
 } from "reactstrap";
-// core components
+
+import {
+getWorkers,
+getDeductionsByWorkerId,
+deleteDeduction,
+updateDeduction,
+createDeduction
+} from "actions/accountingActions";
+
 import Header from "components/Headers/Header.js";
 import EditForm from "components/Forms/EditForm";
+
 import { useState, useEffect } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
-import axios from "axios";
 import moment from "moment";
 import 'moment/locale/ru';
 
@@ -41,28 +32,27 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 
 const Accounting = () => {
-
   const [workers, setWorkers] = useState([]);
+  const [isTableVisible, setIsTableVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState([]);
   const [data, setData] = useState([]);
-
   const [selectedItem, setSelectedItem] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/worker/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    getWorkers()
       .then(response => {
-        // setWorkers(response.data.map(item => item.username));
-        setWorkers(response.data);
+        setWorkers(response);
       })
       .catch(error => {
         console.log(error);
       });
   }, []);
+
+  useEffect(() => {
+    setIsTableVisible(data && data.length > 0);
+  }, [data]);
 
   const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
@@ -71,20 +61,17 @@ const Accounting = () => {
       : null;
     if (!workerId) {
       console.log("Работник не найден");
-      return; // Выход из функции
+      return;
     }
-    axios.get(`http://localhost:8000/api/deduction/worker/${workerId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    getDeductionsByWorkerId(workerId)
       .then(response => {
-        setData(response.data);
+        setData(response);
+        console.log(response);
       })
       .catch(error => {
         console.log(error);
       });
-  }
+  };
 
   const handleEdit = (item) => {
     setSelectedItem(item);
@@ -92,8 +79,26 @@ const Accounting = () => {
   };
 
   const handleDelete = (itemId) => {
-    // Выполните запрос к серверу для удаления данных с указанным itemId
-    // Здесь можно добавить логику удаления данных
+    deleteDeduction(itemId)
+      .then(response => {
+        const workerId = selectedOption && selectedOption.length > 0
+          ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
+          : null;
+        if (!workerId) {
+          console.log("Работник не найден");
+          return;
+        }
+        getDeductionsByWorkerId(workerId)
+          .then(response => {
+            setData(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   const handleFormClose = () => {
@@ -101,40 +106,55 @@ const Accounting = () => {
   };
 
   const handleFormSubmit = (formData) => {
-    // console.log(formData);
-    axios.put(`http://localhost:8000/api/deduction/${formData.id}/`, formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    updateDeduction(formData.id, formData)
       .then(response => {
-        // Обработка успешного ответа
-        // Обновление таблицы путем выполнения нового запроса для получения обновленных данных
         const workerId = selectedOption && selectedOption.length > 0
           ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
           : null;
         if (!workerId) {
           console.log("Работник не найден");
-          return; // Выход из функции
+          return;
         }
-        axios.get(`http://localhost:8000/api/deduction/worker/${workerId}/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
+        getDeductionsByWorkerId(workerId)
           .then(response => {
-            setData(response.data);
-            // console.log(response.data);
+            setData(response);
           })
           .catch(error => {
             console.log(error);
           });
       })
       .catch(error => {
-        // Обработка ошибки
         console.log(error);
       });
     setIsFormOpen(false);
+  };
+
+  const handleAdd = () => {
+    setIsAddFormOpen(true);
+  };
+
+  const handleAddFormSubmit = (formData) => {
+    createDeduction(formData)
+      .then(response => {
+        const workerId = selectedOption && selectedOption.length > 0
+          ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
+          : null;
+        if (!workerId) {
+          console.log("Работник не найден");
+          return;
+        }
+        getDeductionsByWorkerId(workerId)
+          .then(response => {
+            setData(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    setIsAddFormOpen(false);
   };
 
   return (
@@ -143,8 +163,6 @@ const Accounting = () => {
 
       {/* Page content */}
       <div style={{ marginTop: "130px" }}>
-        {/* <Row>
-          <Col > */}
         <Container className="mt--7 col-lg-6">
           <Typeahead
             clearButton
@@ -155,8 +173,6 @@ const Accounting = () => {
             placeholder="Выберите сотрудника..."
           />
         </Container>
-        {/* </Col>
-        </Row> */}
       </div>
 
       {/* Table */}
@@ -165,7 +181,17 @@ const Accounting = () => {
           <div className="col">
             <Card className="shadow">
               <CardHeader className="bg-transparent border-0">
-                <h3 className="mb-0">Вычеты {selectedOption}</h3>
+                {/* <h3 className="mb-0">Вычеты {selectedOption}</h3> */}
+                <Row>
+                  <Col>
+                    <h3 className="mb-0">Вычеты {selectedOption}</h3>
+                  </Col>
+                  <Col className="text-right">
+                    <Button color="primary" onClick={handleAdd} disabled={!isTableVisible}>
+                      Добавить
+                    </Button>
+                  </Col>
+                </Row>
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
@@ -183,46 +209,41 @@ const Accounting = () => {
                 </thead>
                 <tbody>
                   {data && data.length > 0 ? (
-                     data
-                     .sort((a, b) => b.id - a.id) // Сортируем данные по полю id в обратном порядке
-                     .map((item) => (
-                      <tr key={item.id}>
-                        {/* <td>{item.id}</td> */}
-                        <td>{item.user.username}</td>
-                        <td>{item.tag.name}</td>
-                        <td>{item.cost_of_consumables}</td>
-                        <td>{item.amount_of_deposits}</td>
-                        <td>{item.commission_for_deposits}</td>
-                        <td>{item.assignee.user.username}</td>
-                        <td>{moment(item.date).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
-                        <td className="text-right">
-                          <UncontrolledDropdown>
-                            <DropdownToggle
-                              className="btn-icon-only text-light"
-                              role="button"
-                              size="sm"
-                              color=""
-                              onClick={(e) => e.preventDefault()}
-                            >
-                              <i className="fas fa-ellipsis-v" />
-                            </DropdownToggle>
-                            <DropdownMenu className="dropdown-menu-arrow" right>
-                              <DropdownItem onClick={() => handleEdit(item)}>
-                                Изменить
-                              </DropdownItem>
-                              <DropdownItem onClick={() => handleDelete(item.id)}>
-                                Удалить
-                              </DropdownItem>
-                              {/* <DropdownItem
+                    data
+                      .sort((a, b) => b.id - a.id) // Сортируем данные по полю id в обратном порядке
+                      .map((item) => (
+                        <tr key={item.id}>
+                          {/* <td>{item.id}</td> */}
+                          <td>{item.user.username}</td>
+                          <td>{item.tag.name}</td>
+                          <td>{item.cost_of_consumables}</td>
+                          <td>{item.amount_of_deposits}</td>
+                          <td>{item.commission_for_deposits}</td>
+                          <td>{item.assignee.user.username}</td>
+                          <td>{moment(item.date).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
+                          <td className="text-right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                role="button"
+                                size="sm"
+                                color=""
                                 onClick={(e) => e.preventDefault()}
                               >
-                                Something else here
-                              </DropdownItem> */}
-                            </DropdownMenu>
-                          </UncontrolledDropdown>
-                        </td>
-                      </tr>
-                    ))
+                                <i className="fas fa-ellipsis-v" />
+                              </DropdownToggle>
+                              <DropdownMenu className="dropdown-menu-arrow" right>
+                                <DropdownItem onClick={() => handleEdit(item)}>
+                                  Изменить
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleDelete(item.id)}>
+                                  Удалить
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      ))
                   ) : (
                     <tr>
                       <td colSpan="8">Нет данных для отображения</td>
@@ -239,6 +260,36 @@ const Accounting = () => {
           item={selectedItem}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
+          isCreateMode={false}
+        />
+      )}
+      {isAddFormOpen && (
+        <EditForm
+          item={{
+            "id": null,
+            "user": workers.filter((user) => user.username === selectedOption[0])[0],
+            "tag": {
+              "id": 3,
+              "name": "bm"
+            },
+            "cost_of_consumables": null,
+            "amount_of_deposits": null,
+            "commission_for_deposits": null,
+            "assignee": {
+              "id": 1,
+              "user": {
+                "id": 1,
+                "username": "maxim"
+              }
+            },
+            "date": new Date().toISOString(),
+            "user_id": workers.filter((user) => user.username === selectedOption[0])[0].id,
+            "assignee_id": 1,
+            "tag_id": 3
+          }}
+          onClose={() => setIsAddFormOpen(false)}
+          onSubmit={handleAddFormSubmit}
+          isCreateMode={true}
         />
       )}
     </>
