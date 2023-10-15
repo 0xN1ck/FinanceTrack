@@ -1,9 +1,11 @@
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
 from .views import *
 
 urlpatterns = [
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    path('login/', MyTokenObtainPairView.as_view()),
     path('tags/', TagsListCreate.as_view()),
     path('deductions/', DeductionsListCreate.as_view()),
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),

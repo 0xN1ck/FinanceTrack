@@ -1,5 +1,6 @@
 from rest_framework import generics
 from .serializers import *
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class TagsListCreate(generics.ListCreateAPIView):
@@ -48,3 +49,7 @@ class DeductionsForWorkerList(generics.ListAPIView):
     def get_queryset(self):
         worker_id = self.kwargs['user']
         return Deductions.objects.filter(user_id=worker_id)
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

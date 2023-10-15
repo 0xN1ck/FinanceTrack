@@ -1,7 +1,7 @@
 # pull official base image
 FROM python:3.10-alpine
 # set work directory
-WORKDIR /usr/src/FinanceTrack
+WORKDIR /FinanceTrack/finance_track_backend/
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 # copy project
 COPY . .
 # run entrypoint.sh
-ENTRYPOINT ["/usr/src/FinanceTrack/entrypoint.sh"]
+ENTRYPOINT ["/FinanceTrack/finance_track_backend/entrypoint.sh"]

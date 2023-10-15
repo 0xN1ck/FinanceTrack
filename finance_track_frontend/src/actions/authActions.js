@@ -1,14 +1,16 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
-export const login = (email, password) => {
+export const login = (username, password) => {
     return (dispatch) => {
         // Выполняем запрос на сервер для входа пользователя
-        axios.post('http://192.168.1.75:8000/api/dj-rest-auth/login/', { email, password })
+        // axios.post('http://192.168.1.75:8000/api/dj-rest-auth/login/', { email, password })
+        axios.post('http://localhost:8000/api/login/', { username, password })
             .then((response) => {
                 // Если успешно, сохраняем токен в локальном хранилище
+                const decodedToken = jwt_decode(response.data.access);
                 localStorage.setItem('token', response.data.access);
-                localStorage.setItem('username', response.data.user.username);
+                localStorage.setItem('username', decodedToken.username);
                 dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.access });
             })
             .catch((error) => {
@@ -20,7 +22,7 @@ export const login = (email, password) => {
 export const logout = () => {
     return (dispatch) => {
         // Выполняем запрос на сервер для выхода пользователя
-        axios.post('http://192.168.1.75:8000/api/dj-rest-auth/logout/')
+        axios.post('http://localhost:8000/api/dj-rest-auth/logout/')
             .then(() => {
                 // Удаляем токен из локального хранилища
                 localStorage.removeItem('token');
