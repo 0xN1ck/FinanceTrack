@@ -34,7 +34,7 @@ import {
 } from "reactstrap";
 
 import { useDispatch } from "react-redux";
-import { logout } from "actions/authActions";
+import { logout, isAdmin } from "actions/authActions";
 
 var ps;
 
@@ -52,6 +52,9 @@ const Sidebar = (props) => {
   const createLinks = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/home") {
+        if (prop.path === "/accounting" && !isAdmin()) {
+        return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
+      }
       return (
         <NavItem key={key}>
           <NavLink
