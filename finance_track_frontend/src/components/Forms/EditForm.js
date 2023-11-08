@@ -154,7 +154,7 @@ const EditForm = ({ item, onClose, onSubmit, isCreateMode }) => {
   };
 
   return (
-    <Modal isOpen={true} toggle={onClose}>
+    <Modal isOpen={true} toggle={onClose} centered>
       <ModalHeader toggle={onClose}>{headerText}</ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>

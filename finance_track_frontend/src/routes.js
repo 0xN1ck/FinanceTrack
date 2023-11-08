@@ -1,6 +1,6 @@
 import Login from "views/Login.js";
 import Index from "views/Index";
-// import Profile from "views/Profile";
+import Extracts from "./views/Extracts";
 import Accounting from "views/Accounting";
 
 var routes = [
@@ -11,13 +11,13 @@ var routes = [
         component: <Index />,
         layout: "/home",
     },
-    // {
-    //     path: "/user-profile",
-    //     name: "Профиль",
-    //     icon: "ni ni-single-02 text-yellow",
-    //     component: <Profile />,
-    //     layout: "/home",
-    // },
+    {
+        path: "/extracts",
+        name: "Выписки",
+        icon: "ni ni-single-copy-04 text-yellow",
+        component: <Extracts />,
+        layout: "/home",
+    },
     {
         path: "/accounting",
         name: "Учет",

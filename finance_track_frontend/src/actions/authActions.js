@@ -1,6 +1,16 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
+
+const API_BASE_URL = "http://localhost:8000/api"; // Базовый URL вашего API
+
+export let api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+});
+
 export const login = (username, password) => {
   return (dispatch) => {
     // Выполняем запрос на сервер для входа пользователя
@@ -9,6 +19,12 @@ export const login = (username, password) => {
       .then((response) => {
         // Если успешно, сохраняем токен в локальном хранилище
         const decodedToken = jwt_decode(response.data.access);
+        api = axios.create({
+          baseURL: API_BASE_URL,
+          headers: {
+            Authorization: `Bearer ${response.data.access}`,
+          },
+        });
         localStorage.setItem('token', response.data.access);
         localStorage.setItem('username', decodedToken.username);
         dispatch({type: 'LOGIN_SUCCESS', payload: response.data.access});

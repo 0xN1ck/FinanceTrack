@@ -16,7 +16,7 @@ import {
   Media,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
-import { logout } from "actions/authActions";
+import { logout, isAdmin } from "actions/authActions";
 import React from "react";
 
 const AdminNavbar = (props) => {
@@ -68,7 +68,7 @@ const AdminNavbar = (props) => {
                     <span className="avatar avatar-sm rounded-circle">
                       <img
                         alt="..."
-                        src={require("../../assets/img/theme/admin.png")}
+                        src={isAdmin() ? require("../../assets/img/theme/admin.png") : require("../../assets/img/theme/user.png")}
                       />
                     </span>
                     <Media className="ml-2 d-none d-lg-block">

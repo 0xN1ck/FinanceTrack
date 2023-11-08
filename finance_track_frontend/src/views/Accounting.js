@@ -66,7 +66,7 @@ const Accounting = () => {
     getDeductionsByWorkerId(workerId)
       .then(response => {
         setData(response);
-        console.log(response);
+        // console.log(response);
       })
       .catch(error => {
         console.log(error);
