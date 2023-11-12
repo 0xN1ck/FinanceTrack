@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -10,27 +10,31 @@ import {
   ModalFooter,
   Modal,
   Container,
-  Row, Col
+  Row,
+  Col,
 } from "reactstrap";
 
-import DatePicker, {registerLocale} from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import { Typeahead } from "react-bootstrap-typeahead";
-import 'moment/locale/ru';
-import "react-datepicker/dist/react-datepicker.module.css";
-import ru from 'date-fns/locale/ru';
+import "moment/locale/ru";
+import "react-datepicker/dist/react-datepicker.css";
+import ru from "date-fns/locale/ru";
 
-import {getWorkers} from "../../actions/accountingActions";
+import { getWorkers } from "../../actions/accountingActions";
 
-registerLocale('ru', ru);
+registerLocale("ru", ru);
 
-const ReportForm = ({ isOpen, toggleModal }) => {
+const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [workers, setWorkers] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+  const [debt, setDebt] = useState(0);
 
   const inputContainerStyle = {
-    textAlign: 'center',
+    textAlign: "center",
   };
 
   useEffect(() => {
@@ -40,76 +44,113 @@ const ReportForm = ({ isOpen, toggleModal }) => {
 
   useEffect(() => {
     getWorkers()
-      .then(response => {
+      .then((response) => {
         setWorkers(response);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   }, []);
 
   const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
-    const workerId = selectedOption && selectedOption.length > 0
-      ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
-      : null;
+    const workerId =
+      selectedOption && selectedOption.length > 0
+        ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
+        : null;
     if (!workerId) {
       console.log("Работник не найден");
     }
   };
-   const handleCreateReport = () => {
+
+  const handleCreateReport = () => {
     // Логика создания отчета
-    toggleModal(); // Закрытие модального окна после создания отчета
+    // toggleModal(); // Закрытие модального окна после создания отчета
   };
 
   return (
     <>
-    <Modal isOpen={isOpen} toggle={toggleModal} centered>
-      <ModalHeader toggle={toggleModal}>Создание отчета</ModalHeader>
-      <ModalBody>
-        {/* Форма для создания отчета */}
-        {/* Добавьте необходимые поля и логику для создания отчета */}
-        <div style={{ marginTop: "130px" }}>
-          <Container className="mt--7 col-lg-6">
-            <Row>
-              <Col>
-                <Typeahead
-                  clearButton
-                  id="selections-example"
-                  labelKey="name"
-                  options={workers.map(item => item.username)}
-                  onChange={handleChange}
-                  placeholder="Выберите сотрудника..."
-                  inputProps={{ style: { textAlign: 'center' } }}
-                />
-              </Col>
-              <Col>
-                <DatePicker
-                  locale="ru"
-                  className="form-control"
-                  wrapperClassName="form-control"
-                  calendarClassName="react-datepicker__input-container"
-                  customInput={<input style={inputContainerStyle} />} // Добавленный стиль
-                  dateFormat="d MMMM yyyy г."
-                  selectsRange={true}
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={(update) => {
-                    setDateRange(update);
-                  }}
-                  isClearable={true}
-                  placeholderText="Выберите период..."
-                />
-              </Col>
-            </Row>
-          </Container>
-        </div>
-      </ModalBody>
-      <ModalFooter>
-        <Button color="primary" onClick={handleCreateReport}>Создать</Button>{' '}
-        <Button color="secondary" onClick={toggleModal}>Отмена</Button>
-      </ModalFooter>
-    </Modal>
+      <Modal isOpen={true} toggle={onClose} centered>
+        <ModalHeader toggle={onClose}>Создание отчета</ModalHeader>
+        <ModalBody>
+          <Form>
+            <Container>
+              <Row>
+                <Col sm={8}>
+                  <FormGroup>
+                    <Label for="worker">Выберите сотрудника</Label>
+                    <Typeahead
+                      clearButton
+                      id="worker"
+                      labelKey="name"
+                      options={workers.map((item) => item.username)}
+                      onChange={handleChange}
+                      placeholder="Выберите сотрудника..."
+                      inputProps={{ style: { textAlign: "center" } }}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="dateRange">Выберите период</Label>
+                    <DatePicker
+                      locale="ru"
+                      className="form-control"
+                      wrapperClassName="form-control"
+                      calendarClassName="react-datepicker__input-container"
+                      customInput={<input style={inputContainerStyle} />}
+                      dateFormat="d MMMM yyyy г."
+                      selectsRange={true}
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(update) => {
+                        setDateRange(update);
+                      }}
+                      isClearable={true}
+                      placeholderText="Выберите период..."
+                    />
+                  </FormGroup>
+                </Col>
+                <Col sm={4}>
+                  <FormGroup>
+                    <Label for="income">Доход</Label>
+                    <Input
+                      type="number"
+                      id="income"
+                      value={income}
+                      onChange={(e) => setIncome(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="expense">Расход</Label>
+                    <Input
+                      type="number"
+                      id="expense"
+                      value={expense}
+                      onChange={(e) => setExpense(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="debt">Долг</Label>
+                    <Input
+                      type="number"
+                      id="debt"
+                      value={debt}
+                      onChange={(e) => setDebt(e.target.value)}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Container>
+          </Form>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={handleCreateReport}>
+            Создать
+          </Button>{" "}
+          <Button color="secondary" onClick={onClose}>
+            Отмена
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };

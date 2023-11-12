@@ -42,5 +42,6 @@ services:
       - POSTGRES_DB=FinanceTrackDev
     ports:
     - 5432:5432
+    restart: always
 volumes:
   postgres_data:

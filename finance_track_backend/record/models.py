@@ -38,11 +38,11 @@ class Deductions(models.Model):
         return self.user.username
 
 
-class Weeks(models.Model):
+class Extracts(models.Model):
     class Meta:
-        verbose_name_plural = 'Weeks'
+        verbose_name_plural = 'Extracts'
 
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_superuser': False})
+    user = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_superuser': False})
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
     payment = models.DecimalField(max_digits=20, decimal_places=2)
@@ -54,4 +54,4 @@ class Weeks(models.Model):
     total = models.DecimalField(max_digits=20, decimal_places=2)
 
     def __str__(self):
-        return self.user_id.username
+        return self.user.username

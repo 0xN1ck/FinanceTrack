@@ -23,14 +23,14 @@ class DeductionsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeductionsSerializer
 
 
-class WeeksListCreate(generics.ListCreateAPIView):
-    queryset = Weeks.objects.all()
-    serializer_class = WeeksSerializer
+class ExtractsListCreate(generics.ListCreateAPIView):
+    queryset = Extracts.objects.all()
+    serializer_class = ExtractsSerializer
 
 
-class WeeksRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Weeks.objects.all()
-    serializer_class = WeeksSerializer
+class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Extracts.objects.all()
+    serializer_class = ExtractsSerializer
 
 
 class UserList(generics.ListAPIView):
@@ -49,6 +49,14 @@ class DeductionsForWorkerList(generics.ListAPIView):
     def get_queryset(self):
         worker_id = self.kwargs['user']
         return Deductions.objects.filter(user_id=worker_id)
+
+
+class ExtractsForWorkerList(generics.ListAPIView):
+    serializer_class = ExtractsSerializer
+
+    def get_queryset(self):
+        worker_id = self.kwargs['user']
+        return Extracts.objects.filter(user_id=worker_id)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

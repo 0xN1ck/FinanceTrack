@@ -1,44 +1,187 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  CardHeader,
+  Table,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu, DropdownItem
+} from "reactstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import Header from "components/Headers/Header.js";
 
 
-import { isAdmin } from "../actions/authActions";
+import {isAdmin} from "../actions/authActions";
+import {getExtracts, deleteExtracts, createExtracts, updateExtracts} from "../actions/extractActions";
+
 import ReportForm from "components/Forms/ReportForm";
+import moment from "moment/moment";
+import {deleteDeduction, getDeductionsByWorkerId, getWorkers} from "../actions/accountingActions";
 
 
 const Extracts = () => {
-  const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
+  // const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
+  const [data, setData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
 
-  const inputContainerStyle = {
-    textAlign: 'center',
+  useEffect(() => {
+    getExtracts()
+      .then(response => {
+        setData(response);
+        console.log(data)
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
+  // const toggleModal = () => {
+  //   setModalOpen(!modalOpen);
+  // };
+
+  const handleEdit = (item) => {
+    setSelectedItem(item);
+    setIsFormOpen(true);
   };
 
-    const toggleModal = () => {
-    setModalOpen(!modalOpen);
+  const handleDelete = (itemId) => {
+    deleteExtracts(itemId)
+      .then(() => {
+        getExtracts()
+          .then(response => {
+            setData(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+  };
+
+  const handleAdd = () => {
+    setIsAddFormOpen(true);
   };
 
 
   return (
     <>
-      <Header />
+      <Header/>
       {isAdmin() ? (
-        <div style={{ marginTop: "130px" }}>
-          <Container className="mt--7 col-lg-6">
-            <Row>
-              <Col>
-                <Button color="primary" onClick={toggleModal}>Создать отчет</Button>
-              </Col>
-            </Row>
-          </Container>
-        </div>
+        /* Table */
+        <Container className="mt-3" fluid>
+          <Row className="mt-5">
+            <div className="col">
+              <Card className="shadow">
+                <CardHeader className="bg-transparent border-0">
+                  {/* <h3 className="mb-0">Вычеты {selectedOption}</h3> */}
+                  <Row>
+                    <Col>
+                      <h3 className="mb-0">Выписки</h3>
+                    </Col>
+                    <Col className="text-right">
+                      <Button color="primary" onClick={handleAdd}>
+                        Создать отчет
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardHeader>
+                <Table className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                  <tr>
+                    {/* <th>ID</th> */}
+                    <th scope="col">Username</th>
+                    <th scope="col">Начальная дата</th>
+                    <th scope="col">Конечная дата</th>
+                    <th scope="col"/>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {data && data.length > 0 ? (
+                    data
+                      .sort((a, b) => b.id - a.id) // Сортируем данные по полю id в обратном порядке
+                      .map((item) => (
+                        <tr key={item.id}>
+                          {/* <td>{item.id}</td> */}
+                          <td>{item.user.username}</td>
+                          <td>{moment(item.date_start).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
+                          <td>{moment(item.date_end).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
+                          <td className="text-right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                role="button"
+                                size="sm"
+                                color=""
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                <i className="fas fa-ellipsis-v"/>
+                              </DropdownToggle>
+                              <DropdownMenu className="dropdown-menu-arrow" right>
+                                <DropdownItem onClick={() => handleEdit(item)}>
+                                  Просмотр
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleDelete(item.id)}>
+                                  Удалить
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8">Нет данных для отображения</td>
+                    </tr>
+                  )}
+                  </tbody>
+                </Table>
+              </Card>
+            </div>
+          </Row>
+        </Container>
       ) : (
         <h1>Недостаточно прав</h1>
       )}
 
-       <ReportForm isOpen={modalOpen} toggleModal={toggleModal} />
+      {isAddFormOpen && (
+        <ReportForm
+          item={{
+              "id": null,
+              "user": {
+                "id": null,
+                "username": null
+              },
+              "date_start": null,
+              "date_end": null,
+              "payment": null,
+              "income": null,
+              "expense": null,
+              "amount_of_consumables": null,
+              "amount_commission_for_deposits": null,
+              "debt": null,
+              "total": null
+            }
+          }
+          onClose={() => setIsAddFormOpen(false)}
+          // onSubmit={handleAddFormSubmit}
+          isCreateMode={true}
+        />
+      )}
+
+
     </>
   );
 };
