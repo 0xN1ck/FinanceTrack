@@ -38,6 +38,7 @@ export const updateDeduction = (deductionId, formData) => {
 };
 
 export const createDeduction = (formData) => {
+  console.log(formData)
   return api.post("/deductions/", formData)
     .then(response => response.data)
     .catch(error => {

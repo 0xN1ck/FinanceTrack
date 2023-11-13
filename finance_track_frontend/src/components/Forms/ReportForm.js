@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Button,
   Form,
@@ -14,17 +14,17 @@ import {
   Col,
 } from "reactstrap";
 
-import DatePicker, { registerLocale } from "react-datepicker";
-import { Typeahead } from "react-bootstrap-typeahead";
+import DatePicker, {registerLocale} from "react-datepicker";
+import {Typeahead} from "react-bootstrap-typeahead";
 import "moment/locale/ru";
 import "react-datepicker/dist/react-datepicker.css";
 import ru from "date-fns/locale/ru";
 
-import { getWorkers } from "../../actions/accountingActions";
+import {getWorkers} from "../../actions/accountingActions";
 
 registerLocale("ru", ru);
 
-const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
+const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [workers, setWorkers] = useState([]);
@@ -33,14 +33,27 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
   const [expense, setExpense] = useState(0);
   const [debt, setDebt] = useState(0);
 
+  const [formData, setFormData] = useState({
+    id: item.id || '',
+    user: item.user || '',
+    date_start: item.date_start || '',
+    date_end: item.date_end || '',
+    payment: item.payment || '',
+    income: item.income || '',
+    expense: item.expense || '',
+    amount_of_consumables: item.amount_of_consumables || '',
+    amount_commission_for_deposits: item.amount_commission_for_deposits || '',
+    debt: item.debt || '',
+    user_id: item.user_id || '',
+  })
+
   const inputContainerStyle = {
     textAlign: "center",
   };
 
   useEffect(() => {
-    console.log("Start Date:", startDate);
-    console.log("End Date:", endDate);
-  }, [startDate, endDate]);
+    console.log(formData)
+  }, []);
 
   useEffect(() => {
     getWorkers()
@@ -52,15 +65,37 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
       });
   }, []);
 
-  const handleChange = (selectedOption) => {
-    setSelectedOption(selectedOption);
-    const workerId =
-      selectedOption && selectedOption.length > 0
-        ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
-        : null;
-    if (!workerId) {
-      console.log("Работник не найден");
+  const handleChange = (e, name) => {
+    const value = e ? e[0] : ''; // Проверка на undefined
+    let updatedData = {...formData};
+
+    switch (name) {
+      case 'worker':
+        const selectedUser = workers.find(item => item.username === value);
+        if (selectedUser) {
+          updatedData = {
+            ...updatedData,
+            user_id: selectedUser.id,
+            user: selectedUser,
+          };
+        }
+        break;
+      case 'date':
+        setDateRange(e)
+        console.log(e)
+        updatedData = {...updatedData, date_start: e[0] ? e[0].toISOString().substring(0, 10) : '', date_end: e[1] ? e[1].toISOString().substring(0, 10) : ''};
+        break;
+      default:
+        updatedData = {...updatedData, [e.target.name]: e.target.value};
+        break;
     }
+
+    setFormData(updatedData);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({...formData});
   };
 
   const handleCreateReport = () => {
@@ -73,7 +108,7 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
       <Modal isOpen={true} toggle={onClose} centered>
         <ModalHeader toggle={onClose}>Создание отчета</ModalHeader>
         <ModalBody>
-          <Form>
+          <Form onSubmit={handleSubmit}>
             <Container>
               <Row>
                 <Col sm={8}>
@@ -84,9 +119,9 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
                       id="worker"
                       labelKey="name"
                       options={workers.map((item) => item.username)}
-                      onChange={handleChange}
+                      onChange={(e) => handleChange(e, 'worker')}
                       placeholder="Выберите сотрудника..."
-                      inputProps={{ style: { textAlign: "center" } }}
+                      inputProps={{style: {textAlign: "center"}}}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -96,14 +131,12 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
                       className="form-control"
                       wrapperClassName="form-control"
                       calendarClassName="react-datepicker__input-container"
-                      customInput={<input style={inputContainerStyle} />}
+                      customInput={<input style={inputContainerStyle}/>}
                       dateFormat="d MMMM yyyy г."
                       selectsRange={true}
                       startDate={startDate}
                       endDate={endDate}
-                      onChange={(update) => {
-                        setDateRange(update);
-                      }}
+                      onChange={(e) => handleChange(e, 'date')}
                       isClearable={true}
                       placeholderText="Выберите период..."
                     />
@@ -115,8 +148,9 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
                     <Input
                       type="number"
                       id="income"
-                      value={income}
-                      onChange={(e) => setIncome(e.target.value)}
+                      name="income"
+                      value={formData.income}
+                      onChange={(e) => handleChange(e, 'default')}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -124,8 +158,9 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
                     <Input
                       type="number"
                       id="expense"
-                      value={expense}
-                      onChange={(e) => setExpense(e.target.value)}
+                      name="expense"
+                      value={formData.expense}
+                      onChange={(e) => handleChange(e, 'default')}
                     />
                   </FormGroup>
                   <FormGroup>
@@ -133,8 +168,9 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
                     <Input
                       type="number"
                       id="debt"
-                      value={debt}
-                      onChange={(e) => setDebt(e.target.value)}
+                      name="debt"
+                      value={formData.debt}
+                      onChange={(e) => handleChange(e, 'default')}
                     />
                   </FormGroup>
                 </Col>
@@ -143,7 +179,7 @@ const ReportForm = ({ item, isCreateMode, onClose, onSubmit }) => {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={handleCreateReport}>
+          <Button color="primary" onClick={handleSubmit}>
             Создать
           </Button>{" "}
           <Button color="secondary" onClick={onClose}>

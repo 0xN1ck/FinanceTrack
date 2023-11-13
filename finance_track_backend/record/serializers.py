@@ -41,12 +41,13 @@ class DeductionsSerializer(serializers.ModelSerializer):
 
 class ExtractsSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_superuser=False), source='user')
 
     class Meta:
         model = Extracts
         depth = 2
         fields = ('id', 'user', 'date_start', 'date_end', 'payment', 'income', 'expense', 'amount_of_consumables',
-                  'amount_commission_for_deposits', 'debt', 'total')
+                  'amount_commission_for_deposits', 'debt', 'total', 'user_id')
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

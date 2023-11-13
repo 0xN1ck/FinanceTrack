@@ -43,15 +43,15 @@ class Extracts(models.Model):
         verbose_name_plural = 'Extracts'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_superuser': False})
-    date_start = models.DateTimeField()
-    date_end = models.DateTimeField()
-    payment = models.DecimalField(max_digits=20, decimal_places=2)
-    income = models.DecimalField(max_digits=20, decimal_places=2)
-    expense = models.DecimalField(max_digits=20, decimal_places=2)
-    amount_of_consumables = models.DecimalField(max_digits=20, decimal_places=2)
-    amount_commission_for_deposits = models.DecimalField(max_digits=20, decimal_places=2)
-    debt = models.DecimalField(max_digits=20, decimal_places=2)
-    total = models.DecimalField(max_digits=20, decimal_places=2)
+    date_start = models.DateField()
+    date_end = models.DateField()
+    payment = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    income = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    expense = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    amount_of_consumables = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    amount_commission_for_deposits = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    debt = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return self.user.username

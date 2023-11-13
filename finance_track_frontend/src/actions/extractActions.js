@@ -47,6 +47,7 @@ export const updateExtracts = (extractId, formData) => {
 };
 
 export const createExtracts = (formData) => {
+  console.log(formData);
   return api.post("/extracts/", formData)
     .then(response => response.data)
     .catch(error => {
