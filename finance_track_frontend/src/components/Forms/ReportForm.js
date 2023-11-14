@@ -29,9 +29,6 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
   const [startDate, endDate] = dateRange;
   const [workers, setWorkers] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
-  const [income, setIncome] = useState(0);
-  const [expense, setExpense] = useState(0);
-  const [debt, setDebt] = useState(0);
 
   const [formData, setFormData] = useState({
     id: item.id || '',
@@ -46,14 +43,6 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
     debt: item.debt || '',
     user_id: item.user_id || '',
   })
-
-  const inputContainerStyle = {
-    textAlign: "center",
-  };
-
-  useEffect(() => {
-    console.log(formData)
-  }, []);
 
   useEffect(() => {
     getWorkers()
@@ -83,7 +72,10 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
       case 'date':
         setDateRange(e)
         console.log(e)
-        updatedData = {...updatedData, date_start: e[0] ? e[0].toISOString().substring(0, 10) : '', date_end: e[1] ? e[1].toISOString().substring(0, 10) : ''};
+        updatedData = {
+          ...updatedData,
+          date_start: e[0] ? e[0].toISOString().substring(0, 10) : '',
+          date_end: e[1] ? e[1].toISOString().substring(0, 10) : ''};
         break;
       default:
         updatedData = {...updatedData, [e.target.name]: e.target.value};
@@ -131,7 +123,7 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
                       className="form-control"
                       wrapperClassName="form-control"
                       calendarClassName="react-datepicker__input-container"
-                      customInput={<input style={inputContainerStyle}/>}
+                      customInput={<input style={{textAlign: "center"}}/>}
                       dateFormat="d MMMM yyyy г."
                       selectsRange={true}
                       startDate={startDate}

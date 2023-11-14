@@ -16,4 +16,5 @@ urlpatterns = [
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
     path('user/', UserList.as_view()),
     path('worker/', UserWorkerList.as_view()),
+    path('test/', ExtractsViewSet.as_view({'post': 'create'})),
 ]
