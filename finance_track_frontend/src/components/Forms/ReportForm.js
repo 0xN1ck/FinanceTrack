@@ -16,6 +16,7 @@ import {
 
 import DatePicker, {registerLocale} from "react-datepicker";
 import {Typeahead} from "react-bootstrap-typeahead";
+import moment from "moment";
 import "moment/locale/ru";
 import "react-datepicker/dist/react-datepicker.css";
 import ru from "date-fns/locale/ru";
@@ -74,8 +75,9 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
         console.log(e)
         updatedData = {
           ...updatedData,
-          date_start: e[0] ? e[0].toISOString().substring(0, 10) : '',
-          date_end: e[1] ? e[1].toISOString().substring(0, 10) : ''};
+          date_start: e[0] ? moment(e[0]).toDate() : null,
+          date_end: e[1] ? moment(e[1]).toDate() : null,
+        };
         break;
       default:
         updatedData = {...updatedData, [e.target.name]: e.target.value};
@@ -110,7 +112,10 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
                       clearButton
                       id="worker"
                       labelKey="name"
-                      options={workers.map((item) => item.username)}
+                      options={workers.map((item) => {
+                        return item.username;
+                      })}
+                      defaultSelected={formData.user ? [formData.user.username] : []}
                       onChange={(e) => handleChange(e, 'worker')}
                       placeholder="Выберите сотрудника..."
                       inputProps={{style: {textAlign: "center"}}}
@@ -126,8 +131,8 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
                       customInput={<input style={{textAlign: "center"}}/>}
                       dateFormat="d MMMM yyyy г."
                       selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
+                      startDate={formData.date_start ? new Date(formData.date_start) : startDate}
+                      endDate={formData.date_end ? new Date(formData.date_end) : endDate}
                       onChange={(e) => handleChange(e, 'date')}
                       isClearable={true}
                       placeholderText="Выберите период..."

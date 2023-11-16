@@ -42,6 +42,9 @@ class DeductionsSerializer(serializers.ModelSerializer):
 class ExtractsSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_superuser=False), source='user')
+    amount_of_consumables = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
+    amount_commission_for_deposits = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
+    total = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
 
     class Meta:
         model = Extracts

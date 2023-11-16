@@ -26,7 +26,7 @@ class DeductionsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeductionsSerializer
 
 
-class ExtractsListCreate(generics.ListCreateAPIView):
+class ExtractsList(generics.ListAPIView):
     queryset = Extracts.objects.all()
     serializer_class = ExtractsSerializer
 

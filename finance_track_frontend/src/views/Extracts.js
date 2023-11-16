@@ -42,13 +42,11 @@ const Extracts = () => {
     getExtracts()
       .then(response => {
         setData(response);
-        console.log(data)
       })
       .catch(error => {
         console.log(error);
       });
   }, []);
-
   // const toggleModal = () => {
   //   setModalOpen(!modalOpen);
   // };
@@ -165,8 +163,8 @@ const Extracts = () => {
                         <tr key={item.id}>
                           {/* <td>{item.id}</td> */}
                           <td>{item.user.username}</td>
-                          <td>{moment(item.date_start).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
-                          <td>{moment(item.date_end).locale('ru').format('D MMMM YYYY [г.], HH:mm:ss')}</td>
+                          <td>{moment(item.date_start).locale('ru').format('D MMMM YYYY [г.]')}</td>
+                          <td>{moment(item.date_end).locale('ru').format('D MMMM YYYY [г.]')}</td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -217,10 +215,7 @@ const Extracts = () => {
         <ReportForm
           item={{
               "id": null,
-              "user": {
-                "id": null,
-                "username": null
-              },
+              "user": null,
               "date_start": null,
               "date_end": null,
               "payment": null,

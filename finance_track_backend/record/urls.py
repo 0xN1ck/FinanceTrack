@@ -11,10 +11,10 @@ urlpatterns = [
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),
     path('deduction/worker/<int:user>/', DeductionsForWorkerList.as_view()),
     path('assignee/', AssigneesListCreate.as_view()),
-    path('extracts/', ExtractsListCreate.as_view()),
+    path('extracts/', ExtractsList.as_view()),
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
     path('user/', UserList.as_view()),
     path('worker/', UserWorkerList.as_view()),
-    path('test/', ExtractsViewSet.as_view({'post': 'create'})),
+    path('extract-create/', ExtractsViewSet.as_view({'post': 'create'})),
 ]
