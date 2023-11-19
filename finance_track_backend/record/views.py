@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework import viewsets, mixins
 from django.db.models import Sum
+from datetime import datetime
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -26,7 +27,7 @@ class DeductionsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeductionsSerializer
 
 
-class ExtractsList(generics.ListAPIView):
+class ExtractsCreateList(generics.ListCreateAPIView):
     queryset = Extracts.objects.all()
     serializer_class = ExtractsSerializer
 
@@ -74,12 +75,15 @@ class ExtractsViewSet(viewsets.GenericViewSet):
 
         # Расчет суммы для amount_of_consumables
         consumables_sum = Deductions.objects.filter(user=user, date__range=[data['date_start'], data['date_end']]).aggregate(Sum('cost_of_consumables'))
-        amount_of_consumables = consumables_sum['cost_of_consumables__sum']
+        amount_of_consumables = consumables_sum['cost_of_consumables__sum'] or 0
 
         # Расчет суммы для amount_commission_for_deposits
         commission_sum = Deductions.objects.filter(user=user, date__range=[data['date_start'], data['date_end']]).aggregate(Sum('commission_for_deposits'))
-        amount_commission_for_deposits = commission_sum['commission_for_deposits__sum']
+        amount_commission_for_deposits = commission_sum['commission_for_deposits__sum'] or 0
 
+        for i in data.keys():
+            if data.get(i) == '':
+                data[i] = 0
         # Расчет значения для total
         total = (
             float(data['income']) +
@@ -97,8 +101,8 @@ class ExtractsViewSet(viewsets.GenericViewSet):
             payment=data['payment'],
             income=data['income'],
             expense=data['expense'],
-            amount_of_consumables=amount_of_consumables,
-            amount_commission_for_deposits=amount_commission_for_deposits,
+            amount_of_consumables=amount_of_consumables * -1,
+            amount_commission_for_deposits=amount_commission_for_deposits * -1,
             debt=data['debt'],
             total=total,
             user_id=user_id

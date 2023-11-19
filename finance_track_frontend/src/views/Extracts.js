@@ -21,14 +21,6 @@ import {getExtracts, deleteExtracts, createExtracts, updateExtracts} from "../ac
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
-import {
-  createDeduction,
-  deleteDeduction,
-  getDeductionsByWorkerId,
-  getWorkers,
-  updateDeduction
-} from "../actions/accountingActions";
-import EditForm from "../components/Forms/EditForm";
 
 
 const Extracts = () => {
@@ -77,16 +69,9 @@ const Extracts = () => {
     setIsFormOpen(false);
   };
 
-    const handleFormSubmit = (formData) => {
+  const handleFormSubmit = (formData) => {
     updateExtracts(formData.id, formData)
       .then(response => {
-        // const workerId = selectedOption && selectedOption.length > 0
-        //   ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
-        //   : null;
-        // if (!workerId) {
-        //   console.log("Работник не найден");
-        //   return;
-        // }
         getExtracts()
           .then(response => {
             setData(response);
@@ -214,19 +199,19 @@ const Extracts = () => {
       {isAddFormOpen && (
         <ReportForm
           item={{
-              "id": null,
-              "user": null,
-              "date_start": null,
-              "date_end": null,
-              "payment": null,
-              "income": null,
-              "expense": null,
-              "amount_of_consumables": null,
-              "amount_commission_for_deposits": null,
-              "debt": null,
-              "total": null,
-              "user_id": null,
-            }}
+            "id": null,
+            "user": null,
+            "date_start": null,
+            "date_end": null,
+            "payment": null,
+            "income": null,
+            "expense": null,
+            "amount_of_consumables": null,
+            "amount_commission_for_deposits": null,
+            "debt": null,
+            "total": null,
+            "user_id": null,
+          }}
           onClose={() => setIsAddFormOpen(false)}
           onSubmit={handleAddFormSubmit}
           isCreateMode={true}

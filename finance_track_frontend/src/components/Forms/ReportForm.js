@@ -26,6 +26,9 @@ import {getWorkers} from "../../actions/accountingActions";
 registerLocale("ru", ru);
 
 const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
+  const headerText = isCreateMode ? "Добавить данные" : "Изменение данных";
+  const buttonText = isCreateMode ? "Добавить" : "Сохранить";
+
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [workers, setWorkers] = useState([]);
@@ -42,6 +45,7 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
     amount_of_consumables: item.amount_of_consumables || '',
     amount_commission_for_deposits: item.amount_commission_for_deposits || '',
     debt: item.debt || '',
+    total: item.total || '',
     user_id: item.user_id || '',
   })
 
@@ -72,7 +76,6 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
         break;
       case 'date':
         setDateRange(e)
-        console.log(e)
         updatedData = {
           ...updatedData,
           date_start: e[0] ? moment(e[0]).toDate() : null,
@@ -97,15 +100,22 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
     // toggleModal(); // Закрытие модального окна после создания отчета
   };
 
+  let size_head = 8
+  let size_body = 4
+  if (!isCreateMode) {
+    size_head = 12
+    size_body = 6
+  }
+
   return (
     <>
       <Modal isOpen={true} toggle={onClose} centered>
-        <ModalHeader toggle={onClose}>Создание отчета</ModalHeader>
+        <ModalHeader toggle={onClose}>{headerText}</ModalHeader>
         <ModalBody>
           <Form onSubmit={handleSubmit}>
             <Container>
               <Row>
-                <Col sm={8}>
+                <Col sm={size_head}>
                   <FormGroup>
                     <Label for="worker">Выберите сотрудника</Label>
                     <Typeahead
@@ -139,45 +149,125 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
                     />
                   </FormGroup>
                 </Col>
-                <Col sm={4}>
-                  <FormGroup>
-                    <Label for="income">Доход</Label>
-                    <Input
-                      type="number"
-                      id="income"
-                      name="income"
-                      value={formData.income}
-                      onChange={(e) => handleChange(e, 'default')}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="expense">Расход</Label>
-                    <Input
-                      type="number"
-                      id="expense"
-                      name="expense"
-                      value={formData.expense}
-                      onChange={(e) => handleChange(e, 'default')}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="debt">Долг</Label>
-                    <Input
-                      type="number"
-                      id="debt"
-                      name="debt"
-                      value={formData.debt}
-                      onChange={(e) => handleChange(e, 'default')}
-                    />
-                  </FormGroup>
-                </Col>
+                {isCreateMode && (
+                <Col sm={size_body}>
+                    <FormGroup>
+                      <Label for="income">Доход</Label>
+                      <Input
+                        type="number"
+                        id="income"
+                        name="income"
+                        value={formData.income}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="expense">Расход</Label>
+                      <Input
+                        type="number"
+                        id="expense"
+                        name="expense"
+                        value={formData.expense}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="debt">Долг</Label>
+                      <Input
+                        type="number"
+                        id="debt"
+                        name="debt"
+                        value={formData.debt}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                  </Col>
+                )}
               </Row>
+              {!isCreateMode && (
+                <Row>
+                  <Col sm={size_body}>
+                    <FormGroup>
+                      <Label for="income">Доход</Label>
+                      <Input
+                        type="number"
+                        id="income"
+                        name="income"
+                        value={formData.income}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="expense">Расход</Label>
+                      <Input
+                        type="number"
+                        id="expense"
+                        name="expense"
+                        value={formData.expense}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="debt">Долг</Label>
+                      <Input
+                        type="number"
+                        id="debt"
+                        name="debt"
+                        value={formData.debt}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col sm={size_body}>
+                    <FormGroup>
+                      <Label for="payment">Выплата</Label>
+                      <Input
+                        type="number"
+                        id="payment"
+                        name="payment"
+                        value={formData.payment}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="amount_of_consumables">Сумма расходников</Label>
+                      <Input
+                        type="number"
+                        id="amount_of_consumables"
+                        name="amount_of_consumables"
+                        value={formData.amount_of_consumables}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="amount_commission_for_deposits">Комиссия за пополнения</Label>
+                      <Input
+                        type="number"
+                        id="amount_commission_for_deposits"
+                        name="amount_commission_for_deposits"
+                        value={formData.amount_commission_for_deposits}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="total">Итого</Label>
+                      <Input
+                        type="number"
+                        id="total"
+                        name="total"
+                        value={formData.total}
+                        onChange={(e) => handleChange(e, 'default')}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+              )}
             </Container>
           </Form>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
-            Создать
+            {buttonText}
           </Button>{" "}
           <Button color="secondary" onClick={onClose}>
             Отмена

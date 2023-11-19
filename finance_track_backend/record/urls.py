@@ -11,7 +11,7 @@ urlpatterns = [
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),
     path('deduction/worker/<int:user>/', DeductionsForWorkerList.as_view()),
     path('assignee/', AssigneesListCreate.as_view()),
-    path('extracts/', ExtractsList.as_view()),
+    path('extracts/', ExtractsCreateList.as_view()),
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
     path('user/', UserList.as_view()),
