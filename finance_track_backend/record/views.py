@@ -40,16 +40,16 @@ class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
-    
+
+
 class UserWorkerList(generics.ListAPIView):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
-    
-    
+
+
 class DeductionsForWorkerList(generics.ListAPIView):
     serializer_class = DeductionsSerializer
-    
+
     def get_queryset(self):
         worker_id = self.kwargs['user']
         return Deductions.objects.filter(user_id=worker_id)
@@ -74,11 +74,15 @@ class ExtractsViewSet(viewsets.GenericViewSet):
         user = User.objects.get(id=user_id)
 
         # Расчет суммы для amount_of_consumables
-        consumables_sum = Deductions.objects.filter(user=user, date__range=[data['date_start'], data['date_end']]).aggregate(Sum('cost_of_consumables'))
+        consumables_sum = Deductions.objects.filter(user=user,
+                                                    date__range=[data['date_start'], data['date_end']]).aggregate(
+            Sum('cost_of_consumables'))
         amount_of_consumables = consumables_sum['cost_of_consumables__sum'] or 0
 
         # Расчет суммы для amount_commission_for_deposits
-        commission_sum = Deductions.objects.filter(user=user, date__range=[data['date_start'], data['date_end']]).aggregate(Sum('commission_for_deposits'))
+        commission_sum = Deductions.objects.filter(user=user,
+                                                   date__range=[data['date_start'], data['date_end']]).aggregate(
+            Sum('commission_for_deposits'))
         amount_commission_for_deposits = commission_sum['commission_for_deposits__sum'] or 0
 
         for i in data.keys():
@@ -86,11 +90,11 @@ class ExtractsViewSet(viewsets.GenericViewSet):
                 data[i] = 0
         # Расчет значения для total
         total = (
-            float(data['income']) +
-            float(data['expense']) +
-            float(amount_of_consumables * -1) +
-            float(amount_commission_for_deposits * -1) +
-            float(data['debt'])
+                float(data['income']) +
+                float(data['expense']) +
+                float(amount_of_consumables * -1) +
+                float(amount_commission_for_deposits * -1) +
+                float(data['debt'])
         )
 
         # Создание нового объекта Extracts
