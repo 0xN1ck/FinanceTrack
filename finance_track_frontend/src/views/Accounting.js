@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Card,
   CardHeader,
@@ -15,7 +15,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "reactstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
+import {Typeahead} from "react-bootstrap-typeahead";
 import moment from "moment";
 import "moment/locale/ru";
 import "react-bootstrap-typeahead/css/Typeahead.css";
@@ -179,10 +179,10 @@ const Accounting = () => {
         {currentPage !== 0 && (
           <>
             <PaginationItem>
-              <PaginationLink first onClick={() => handlePageChange(0)} />
+              <PaginationLink first onClick={() => handlePageChange(0)}/>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)} />
+              <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)}/>
             </PaginationItem>
           </>
         )}
@@ -194,10 +194,10 @@ const Accounting = () => {
         {currentPage !== totalPages - 1 && (
           <>
             <PaginationItem>
-              <PaginationLink next onClick={() => handlePageChange(currentPage + 1)} />
+              <PaginationLink next onClick={() => handlePageChange(currentPage + 1)}/>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink last onClick={() => handlePageChange(totalPages - 1)} />
+              <PaginationLink last onClick={() => handlePageChange(totalPages - 1)}/>
             </PaginationItem>
           </>
         )}
@@ -207,9 +207,9 @@ const Accounting = () => {
 
   return (
     <>
-      <Header />
+      <Header/>
       {/* Page content */}
-      <div style={{ marginTop: "130px" }}>
+      <div style={{marginTop: "130px"}}>
         <Container className="mt--7 col-lg-6">
           <Typeahead
             clearButton
@@ -241,69 +241,69 @@ const Accounting = () => {
               </CardHeader>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
-                  <tr>
-                    <th scope="col">№</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Tag</th>
-                    <th scope="col">Сумма расходников</th>
-                    <th scope="col">Сумма пополнения</th>
-                    <th scope="col">Коммисия за пополнения</th>
-                    <th scope="col">Assignee</th>
-                    <th scope="col">Date</th>
-                    <th scope="col" />
-                  </tr>
+                <tr>
+                  <th scope="col">№</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Tag</th>
+                  <th scope="col">Сумма расходников</th>
+                  <th scope="col">Сумма пополнения</th>
+                  <th scope="col">Коммисия за пополнения</th>
+                  <th scope="col">Assignee</th>
+                  <th scope="col">Date</th>
+                  <th scope="col"/>
+                </tr>
                 </thead>
                 <tbody>
-                  {/* Table body rendering */}
-                  {data && data.length > 0 ? (
-                    data
-                      .sort((a, b) => b.id - a.id)
-                      .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
-                      .map((item, index) => {
-                        const rowNumber = index + 1;
-                        return (
-                          <tr key={item.id}>
-                            <td>{rowNumber}</td>
-                            <td>{item.user.username}</td>
-                            <td>{item.tag.name}</td>
-                            <td>{item.cost_of_consumables}</td>
-                            <td>{item.amount_of_deposits}</td>
-                            <td>{item.commission_for_deposits}</td>
-                            <td>{item.assignee.user.username}</td>
-                            <td>
-                              {moment(item.date)
-                                .locale("ru")
-                                .format("D MMMM YYYY [г.], HH:mm:ss")}
-                            </td>
-                            <td className="text-right">
-                              <UncontrolledDropdown>
-                                <DropdownToggle
-                                  className="btn-icon-only text-light"
-                                  role="button"
-                                  size="sm"
-                                  color=""
-                                  onClick={(e) => e.preventDefault()}
-                                >
-                                  <i className="fas fa-ellipsis-v" />
-                                </DropdownToggle>
-                                <DropdownMenu className="dropdown-menu-arrow" right>
-                                  <DropdownItem onClick={() => handleEdit(item)}>
-                                    Изменить
-                                  </DropdownItem>
-                                  <DropdownItem onClick={() => handleDelete(item.id)}>
-                                    Удалить
-                                  </DropdownItem>
-                                </DropdownMenu>
-                              </UncontrolledDropdown>
-                            </td>
-                          </tr>
-                        );
-                      })
-                  ) : (
-                    <tr>
-                      <td colSpan="9">Нет данных для отображения</td>
-                    </tr>
-                  )}
+                {/* Table body rendering */}
+                {data && data.length > 0 ? (
+                  data
+                    .sort((a, b) => b.id - a.id)
+                    .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+                    .map((item, index) => {
+                      const rowNumber = index + 1;
+                      return (
+                        <tr key={item.id}>
+                          <td>{rowNumber}</td>
+                          <td>{item.user.username}</td>
+                          <td>{item.tag.name}</td>
+                          <td>{item.cost_of_consumables}</td>
+                          <td>{item.amount_of_deposits}</td>
+                          <td>{item.commission_for_deposits}</td>
+                          <td>{item.assignee.user.username}</td>
+                          <td>
+                            {moment(item.date)
+                              .locale("ru")
+                              .format("D MMMM YYYY [г.], HH:mm:ss")}
+                          </td>
+                          <td className="text-right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                role="button"
+                                size="sm"
+                                color=""
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                <i className="fas fa-ellipsis-v"/>
+                              </DropdownToggle>
+                              <DropdownMenu className="dropdown-menu-arrow" right>
+                                <DropdownItem onClick={() => handleEdit(item)}>
+                                  Изменить
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleDelete(item.id)}>
+                                  Удалить
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      );
+                    })
+                ) : (
+                  <tr>
+                    <td colSpan="9">Нет данных для отображения</td>
+                  </tr>
+                )}
                 </tbody>
               </Table>
 
