@@ -10,7 +10,7 @@ urlpatterns = [
     path('deductions/', DeductionsListCreate.as_view()),
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),
     path('deduction/worker/<int:user>/', DeductionsForWorkerList.as_view()),
-    path('deduction/worker/<int:user>/get-total-pages/', DeductionsGetTotalPagesSerializer.as_view()),
+    path('deduction/worker/<int:user>/get-total-pages/', DeductionsGetTotalPagesSerializer.as_view()),  # test
     path('assignee/', AssigneesListCreate.as_view()),
     path('extracts/', ExtractsCreateList.as_view()),
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),

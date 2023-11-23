@@ -71,7 +71,7 @@ class DeductionsForWorkerList(generics.ListAPIView):
         return Deductions.objects.filter(user_id=worker_id)[start_index:end_index]
 
 
-class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
+class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):  # test
     serializer_class = DeductionsGetTotalPagesSerializer
     page_size = 10
 
