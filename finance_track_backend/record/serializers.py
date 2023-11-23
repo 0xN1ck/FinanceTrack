@@ -56,6 +56,7 @@ class ExtractsSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'date_start', 'date_end', 'payment', 'income', 'expense', 'amount_of_consumables',
                   'amount_commission_for_deposits', 'debt', 'total', 'user_id')
 
+
 # class ExtractsSerializer(serializers.ModelSerializer):
 #     user = serializers.PrimaryKeyRelatedField(read_only=True)
 #
