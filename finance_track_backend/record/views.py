@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework import viewsets, mixins
 from django.db.models import Sum
+from rest_framework.pagination import PageNumberPagination
 from datetime import datetime
 from rest_framework.response import Response
 from .serializers import *
@@ -49,10 +50,36 @@ class UserWorkerList(generics.ListAPIView):
 
 class DeductionsForWorkerList(generics.ListAPIView):
     serializer_class = DeductionsSerializer
+    pagination_class = PageNumberPagination
+    page_size = 10  # Set your desired page size
+
+    def get_total_pages(self):
+        worker_id = self.kwargs['user']
+        total_items = Deductions.objects.filter(user_id=worker_id).count()
+        total_pages = (total_items + self.page_size - 1) // self.page_size
+        return total_pages
 
     def get_queryset(self):
         worker_id = self.kwargs['user']
-        return Deductions.objects.filter(user_id=worker_id)
+        page = self.request.query_params.get('page')
+        try:
+            page = int(page) if page is not None and page.isdigit() else 1
+        except ValueError:
+            page = 1
+        start_index = (page - 1) * self.page_size
+        end_index = page * self.page_size
+        return Deductions.objects.filter(user_id=worker_id)[start_index:end_index]
+
+
+class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
+    serializer_class = DeductionsGetTotalPagesSerializer
+    page_size = 10
+
+    def get_object(self):
+        worker_id = self.kwargs['user']
+        total_items = Deductions.objects.filter(user_id=worker_id).count()
+        total_pages = (total_items + self.page_size - 1) // self.page_size
+        return {'total_pages': total_pages}
 
 
 class ExtractsForWorkerList(generics.ListAPIView):

@@ -39,6 +39,10 @@ class DeductionsSerializer(serializers.ModelSerializer):
                   'assignee', 'date', 'user_id', 'assignee_id', 'tag_id')
 
 
+class DeductionsGetTotalPagesSerializer(serializers.Serializer):
+    total_pages = serializers.IntegerField()
+
+
 class ExtractsSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_superuser=False), source='user')

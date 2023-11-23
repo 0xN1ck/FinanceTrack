@@ -9,8 +9,8 @@ export const getWorkers = () => {
     });
 };
 
-export const getDeductionsByWorkerId = (workerId) => {
-  return api.get(`/deduction/worker/${workerId}`)
+export const getDeductionsByWorkerId = (workerId, page, pageSize) => {
+  return api.get(`/deduction/worker/${workerId}?page=${page}&page_size=${pageSize}`)
     .then(response => response.data)
     .catch(error => {
       console.log(error);

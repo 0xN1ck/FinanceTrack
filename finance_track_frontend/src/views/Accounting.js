@@ -39,7 +39,7 @@ const Accounting = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 5;
+  const pageSize = 10;
   const totalPages = Math.ceil(data.length / pageSize);
 
   useEffect(() => {
@@ -162,48 +162,48 @@ const Accounting = () => {
     setIsAddFormOpen(false);
   };
 
-const handlePageChange = (page) => {
-  setCurrentPage(page);
-};
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
-const renderPagination = () => {
-  const pages = [];
-  for (let i = 0; i < totalPages; i++) {
-    pages.push(i);
-  }
-  const startPage = Math.max(0, currentPage - 4);
-  const endPage = Math.min(startPage + 4, totalPages - 1);
+  const renderPagination = () => {
+    const pages = [];
+    for (let i = 0; i < totalPages; i++) {
+      pages.push(i);
+    }
+    const startPage = Math.max(0, currentPage - 4);
+    const endPage = Math.min(startPage + 4, totalPages - 1);
 
-  return (
-    <Pagination className="pagination justify-content-center" listClassName="justify-content-center">
-      {currentPage !== 0 && (
-        <>
-          <PaginationItem>
-            <PaginationLink first onClick={() => handlePageChange(0)} />
+    return (
+      <Pagination className="pagination justify-content-center" listClassName="justify-content-center">
+        {currentPage !== 0 && (
+          <>
+            <PaginationItem>
+              <PaginationLink first onClick={() => handlePageChange(0)} />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)} />
+            </PaginationItem>
+          </>
+        )}
+        {pages.slice(startPage, endPage + 1).map((page) => (
+          <PaginationItem key={page} active={page === currentPage}>
+            <PaginationLink onClick={() => handlePageChange(page)}>{page + 1}</PaginationLink>
           </PaginationItem>
-          <PaginationItem>
-            <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)} />
-          </PaginationItem>
-        </>
-      )}
-      {pages.slice(startPage, endPage + 1).map((page) => (
-        <PaginationItem key={page} active={page === currentPage}>
-          <PaginationLink onClick={() => handlePageChange(page)}>{page + 1}</PaginationLink>
-        </PaginationItem>
-      ))}
-      {currentPage !== totalPages - 1 && (
-        <>
-          <PaginationItem>
-            <PaginationLink next onClick={() => handlePageChange(currentPage + 1)} />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink last onClick={() => handlePageChange(totalPages - 1)} />
-          </PaginationItem>
-        </>
-      )}
-    </Pagination>
-  );
-};
+        ))}
+        {currentPage !== totalPages - 1 && (
+          <>
+            <PaginationItem>
+              <PaginationLink next onClick={() => handlePageChange(currentPage + 1)} />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink last onClick={() => handlePageChange(totalPages - 1)} />
+            </PaginationItem>
+          </>
+        )}
+      </Pagination>
+    );
+  };
 
   return (
     <>
