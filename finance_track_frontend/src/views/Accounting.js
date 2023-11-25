@@ -11,9 +11,6 @@ import {
   Row,
   Button,
   Col,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
 } from "reactstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import moment from "moment";
@@ -22,6 +19,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import Header from "components/Headers/Header.js";
 import EditForm from "components/Forms/EditForm";
+import PaginationForTable from "components/Pagination/PaginationForTable";
 import {
   getWorkers,
   getDeductionsByWorkerId,
@@ -42,7 +40,6 @@ const Accounting = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(0);
-  // const totalPages = Math.ceil(data.length / pageSize);
 
   useEffect(() => {
     getWorkers()
@@ -194,45 +191,6 @@ const Accounting = () => {
       });
   };
 
-  const renderPagination = () => {
-    const pages = [];
-    for (let i = 0; i < totalPages; i++) {
-      pages.push(i);
-    }
-    const startPage = Math.max(0, currentPage - 4);
-    const endPage = Math.min(startPage + 4, totalPages - 1);
-
-    return (
-      <Pagination className="pagination justify-content-center" listClassName="justify-content-center">
-        {currentPage !== 0 && (
-          <>
-            <PaginationItem>
-              <PaginationLink first onClick={() => handlePageChange(0)}/>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink previous onClick={() => handlePageChange(currentPage - 1)}/>
-            </PaginationItem>
-          </>
-        )}
-        {pages.slice(startPage, endPage + 1).map((page) => (
-          <PaginationItem key={page} active={page === currentPage}>
-            <PaginationLink onClick={() => handlePageChange(page)}>{page + 1}</PaginationLink>
-          </PaginationItem>
-        ))}
-        {currentPage !== totalPages - 1 && (
-          <>
-            <PaginationItem>
-              <PaginationLink next onClick={() => handlePageChange(currentPage + 1)}/>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink last onClick={() => handlePageChange(totalPages - 1)}/>
-            </PaginationItem>
-          </>
-        )}
-      </Pagination>
-    );
-  };
-
   return (
     <>
       <Header/>
@@ -336,7 +294,11 @@ const Accounting = () => {
               </Table>
 
               {/* Pagination */}
-              {renderPagination()}
+              <PaginationForTable
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              />
             </Card>
           </div>
         </Row>
