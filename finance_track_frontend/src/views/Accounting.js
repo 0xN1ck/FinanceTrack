@@ -74,6 +74,7 @@ const Accounting = () => {
       })
       .catch((error) => {
         console.log(error);
+        console.log(error);
       })
     getDeductionsByWorkerId(workerId, 1, pageSize)
       .then((response) => {
@@ -101,7 +102,7 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        getDeductionsByWorkerId(workerId)
+        getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
             setData(response);
           })
@@ -129,7 +130,8 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        getDeductionsByWorkerId(workerId)
+        console.log(currentPage, pageSize);
+        getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
             setData(response);
           })
@@ -158,7 +160,7 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        getDeductionsByWorkerId(workerId)
+        getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
             setData(response);
           })
@@ -259,7 +261,7 @@ const Accounting = () => {
                     <h3 className="mb-0">Вычеты {selectedOption}</h3>
                   </Col>
                   <Col className="text-right">
-                    <Button color="primary" onClick={handleAdd} disabled={!isTableVisible}>
+                    <Button color="primary" onClick={handleAdd} disabled={selectedOption.length === 0}>
                       Добавить
                     </Button>
                   </Col>
@@ -284,7 +286,7 @@ const Accounting = () => {
                 {data && data.length > 0 ? (
                   data
                     .sort((a, b) => b.id - a.id)
-                    .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+                    //.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
                     .map((item, index) => {
                       const rowNumber = index + 1;
                       return (

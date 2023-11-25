@@ -1,6 +1,6 @@
 from rest_framework import generics
 from rest_framework import viewsets, mixins
-from django.db.models import Sum
+from django.db.models import Sum, F
 from rest_framework.pagination import PageNumberPagination
 from datetime import datetime
 from rest_framework.response import Response
@@ -62,7 +62,9 @@ class DeductionsForWorkerList(generics.ListAPIView):
             page = 1
         start_index = (page - 1) * self.page_size
         end_index = page * self.page_size
-        return Deductions.objects.filter(user_id=worker_id)[start_index:end_index]
+        queryset = Deductions.objects.filter(user_id=worker_id)
+        sorted_queryset = queryset.order_by(F('id')).reverse()
+        return sorted_queryset[start_index:end_index]
 
 
 class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):  # test
