@@ -53,12 +53,6 @@ class DeductionsForWorkerList(generics.ListAPIView):
     pagination_class = PageNumberPagination
     page_size = 10  # Set your desired page size
 
-    def get_total_pages(self):
-        worker_id = self.kwargs['user']
-        total_items = Deductions.objects.filter(user_id=worker_id).count()
-        total_pages = (total_items + self.page_size - 1) // self.page_size
-        return total_pages
-
     def get_queryset(self):
         worker_id = self.kwargs['user']
         page = self.request.query_params.get('page')

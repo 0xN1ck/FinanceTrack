@@ -18,6 +18,15 @@ export const getDeductionsByWorkerId = (workerId, page, pageSize) => {
     });
 };
 
+export const getTotalPagesForDeductions = (workerId) => {
+  return api.get(`/deduction/worker/${workerId}/get-total-pages/`)
+    .then(response => response.data)
+    .catch(error => {
+      console.log(error);
+      throw error;
+    });
+};
+
 export const deleteDeduction = (deductionId) => {
   return api.delete(`/deduction/${deductionId}/`)
     .then(response => response.data)

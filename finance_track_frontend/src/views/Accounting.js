@@ -28,6 +28,7 @@ import {
   deleteDeduction,
   updateDeduction,
   createDeduction,
+  getTotalPagesForDeductions,
 } from "actions/accountingActions";
 
 const Accounting = () => {
@@ -40,7 +41,8 @@ const Accounting = () => {
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
-  const totalPages = Math.ceil(data.length / pageSize);
+  const [totalPages, setTotalPages] = useState(0);
+  // const totalPages = Math.ceil(data.length / pageSize);
 
   useEffect(() => {
     getWorkers()
@@ -66,8 +68,16 @@ const Accounting = () => {
       console.log("Работник не найден");
       return;
     }
-    getDeductionsByWorkerId(workerId)
+    getTotalPagesForDeductions(workerId)
       .then((response) => {
+        setTotalPages(response.total_pages);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    getDeductionsByWorkerId(workerId, 1, pageSize)
+      .then((response) => {
+        console.log(response);
         setData(response);
       })
       .catch((error) => {
@@ -164,6 +174,22 @@ const Accounting = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    const workerId =
+      selectedOption && selectedOption.length > 0
+        ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
+        : null;
+    if (!workerId) {
+      console.log("Работник не найден");
+      return;
+    }
+    getDeductionsByWorkerId(workerId, page + 1, pageSize)
+      .then((response) => {
+        console.log(response);
+        setData(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const renderPagination = () => {
