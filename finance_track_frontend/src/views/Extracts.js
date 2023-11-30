@@ -14,34 +14,48 @@ import {
 } from "reactstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import Header from "components/Headers/Header.js";
+import PaginationForTable from "components/Pagination/PaginationForTable";
 
 
 import {isAdmin} from "../actions/authActions";
-import {getExtracts, deleteExtracts, createExtracts, updateExtracts} from "../actions/extractActions";
+import {
+  getExtracts,
+  getTotalPagesForExtracts,
+  deleteExtracts,
+  createExtracts,
+  updateExtracts
+} from "../actions/extractActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
 
 
 const Extracts = () => {
-  // const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    getExtracts()
+    getTotalPagesForExtracts()
+      .then((response) => {
+        setTotalPages(response.total_pages);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    getExtracts(1, pageSize)
       .then(response => {
-        setData(response);
+        console.log(response);
+        setData(response.results);
       })
       .catch(error => {
         console.log(error);
       });
   }, []);
-  // const toggleModal = () => {
-  //   setModalOpen(!modalOpen);
-  // };
 
   const handleEdit = (item) => {
     setSelectedItem(item);
@@ -52,9 +66,9 @@ const Extracts = () => {
   const handleDelete = (itemId) => {
     deleteExtracts(itemId)
       .then(() => {
-        getExtracts()
+        getExtracts(currentPage + 1, pageSize)
           .then(response => {
-            setData(response);
+            setData(response.results);
           })
           .catch(error => {
             console.log(error);
@@ -72,9 +86,9 @@ const Extracts = () => {
   const handleFormSubmit = (formData) => {
     updateExtracts(formData.id, formData)
       .then(response => {
-        getExtracts()
+        getExtracts(currentPage + 1, pageSize)
           .then(response => {
-            setData(response);
+            setData(response.results);
           })
           .catch(error => {
             console.log(error);
@@ -93,9 +107,9 @@ const Extracts = () => {
   const handleAddFormSubmit = (formData) => {
     createExtracts(formData)
       .then(response => {
-        getExtracts()
+        getExtracts(currentPage + 1, pageSize)
           .then(response => {
-            setData(response);
+            setData(response.results);
           })
           .catch(error => {
             console.log(error);
@@ -107,7 +121,17 @@ const Extracts = () => {
     setIsAddFormOpen(false);
   };
 
-
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    getExtracts(page + 1, pageSize)
+      .then((response) => {
+        console.log(response);
+        setData(response.results);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <>
       <Header/>
@@ -180,6 +204,11 @@ const Extracts = () => {
                   )}
                   </tbody>
                 </Table>
+                <PaginationForTable
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </Card>
             </div>
           </Row>

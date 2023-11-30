@@ -1,5 +1,4 @@
 import {api} from "./authActions";
-import moment from "moment/moment";
 
 // export const getWorkers = () => {
 //   return api.get("/worker/")
@@ -19,8 +18,17 @@ import moment from "moment/moment";
 //     });
 // };
 
-export const getExtracts = () => {
-  return api.get("/extracts/")
+export const getExtracts = (page, pageSize) => {
+  return api.get(`/extracts/?page=${page}&page_size=${pageSize}`)
+    .then(response => response.data)
+    .catch(error => {
+      console.log(error);
+      throw error;
+    });
+};
+
+export const getTotalPagesForExtracts = () => {
+  return api.get(`/extracts/get-total-pages/`)
     .then(response => response.data)
     .catch(error => {
       console.log(error);

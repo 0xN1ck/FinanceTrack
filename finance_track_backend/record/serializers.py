@@ -57,6 +57,10 @@ class ExtractsSerializer(serializers.ModelSerializer):
                   'amount_commission_for_deposits', 'debt', 'total', 'user_id')
 
 
+class ExtractsGetTotalPagesSerializer(serializers.Serializer):
+    total_pages = serializers.IntegerField()
+
+
 # class ExtractsSerializer(serializers.ModelSerializer):
 #     user = serializers.PrimaryKeyRelatedField(read_only=True)
 #

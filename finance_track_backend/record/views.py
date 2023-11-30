@@ -2,7 +2,6 @@ from rest_framework import generics
 from rest_framework import viewsets, mixins
 from django.db.models import Sum, F
 from rest_framework.pagination import PageNumberPagination
-from datetime import datetime
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -29,8 +28,27 @@ class DeductionsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ExtractsCreateList(generics.ListCreateAPIView):
-    queryset = Extracts.objects.all()
+    queryset = Extracts.objects.all().order_by(F('id')).reverse()
     serializer_class = ExtractsSerializer
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            self.pagination_class.page_size = int(page_size)
+        return queryset
+
+
+class ExtractsGetTotalPagesSerializer(generics.RetrieveAPIView):
+    serializer_class = ExtractsGetTotalPagesSerializer
+    page_size = 10
+
+    def get_object(self):
+        total_items = Extracts.objects.count()
+        total_pages = (total_items + self.page_size - 1) // self.page_size
+        return {'total_pages': total_pages}
 
 
 class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):

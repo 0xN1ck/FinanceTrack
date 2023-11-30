@@ -13,6 +13,7 @@ urlpatterns = [
     path('deduction/worker/<int:user>/get-total-pages/', DeductionsGetTotalPagesSerializer.as_view()),  # test
     path('assignee/', AssigneesListCreate.as_view()),
     path('extracts/', ExtractsCreateList.as_view()),
+    path('extracts/get-total-pages/', ExtractsGetTotalPagesSerializer.as_view()),  # test
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
     path('user/', UserList.as_view()),
