@@ -75,8 +75,8 @@ const Accounting = () => {
       })
     getDeductionsByWorkerId(workerId, 1, pageSize)
       .then((response) => {
-        console.log(response);
-        setData(response);
+        console.log(response)
+        setData(response.results);
       })
       .catch((error) => {
         console.log(error);
@@ -101,7 +101,7 @@ const Accounting = () => {
         }
         getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
-            setData(response);
+            setData(response.results);
           })
           .catch((error) => {
             console.log(error);
@@ -130,7 +130,7 @@ const Accounting = () => {
         console.log(currentPage, pageSize);
         getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
-            setData(response);
+            setData(response.results);
           })
           .catch((error) => {
             console.log(error);
@@ -159,7 +159,7 @@ const Accounting = () => {
         }
         getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
-            setData(response);
+            setData(response.results);
           })
           .catch((error) => {
             console.log(error);
@@ -183,8 +183,7 @@ const Accounting = () => {
     }
     getDeductionsByWorkerId(workerId, page + 1, pageSize)
       .then((response) => {
-        console.log(response);
-        setData(response);
+        setData(response.results);
       })
       .catch((error) => {
         console.log(error);

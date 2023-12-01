@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework import viewsets, mixins
+from datetime import datetime, timedelta
 from django.db.models import Sum, F
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -67,25 +68,21 @@ class UserWorkerList(generics.ListAPIView):
 
 
 class DeductionsForWorkerList(generics.ListAPIView):
+    queryset = Deductions.objects.all()
     serializer_class = DeductionsSerializer
     pagination_class = PageNumberPagination
-    page_size = 10  # Set your desired page size
+    pagination_class.page_size = 10
 
     def get_queryset(self):
         worker_id = self.kwargs['user']
-        page = self.request.query_params.get('page')
-        try:
-            page = int(page) if page is not None and page.isdigit() else 1
-        except ValueError:
-            page = 1
-        start_index = (page - 1) * self.page_size
-        end_index = page * self.page_size
-        queryset = Deductions.objects.filter(user_id=worker_id)
-        sorted_queryset = queryset.order_by(F('id')).reverse()
-        return sorted_queryset[start_index:end_index]
+        queryset = Deductions.objects.filter(user_id=worker_id).order_by(F('id')).reverse()
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            self.pagination_class.page_size = int(page_size)
+        return queryset
 
 
-class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):  # test
+class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
     serializer_class = DeductionsGetTotalPagesSerializer
     page_size = 10
 
@@ -115,14 +112,20 @@ class ExtractsViewSet(viewsets.GenericViewSet):
         user = User.objects.get(id=user_id)
 
         # Расчет суммы для amount_of_consumables
+
+        date_start = datetime.strptime(data['date_start'], '%Y-%m-%d')
+        date_end = datetime.strptime(data['date_end'], '%Y-%m-%d') + timedelta(days=1)
         consumables_sum = Deductions.objects.filter(user=user,
-                                                    date__range=[data['date_start'], data['date_end']]).aggregate(
+                                                    date__range=[date_start, date_end]).aggregate(
             Sum('cost_of_consumables'))
         amount_of_consumables = consumables_sum['cost_of_consumables__sum'] or 0
 
         # Расчет суммы для amount_commission_for_deposits
+        temp = Deductions.objects.filter(user=user, date__range=[date_start, date_end])
+        for _ in temp:
+            print(_.commission_for_deposits, _.date)
         commission_sum = Deductions.objects.filter(user=user,
-                                                   date__range=[data['date_start'], data['date_end']]).aggregate(
+                                                   date__range=[date_start, date_end]).aggregate(
             Sum('commission_for_deposits'))
         amount_commission_for_deposits = commission_sum['commission_for_deposits__sum'] or 0
 
