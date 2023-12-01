@@ -1,11 +1,12 @@
 from rest_framework import generics
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 from datetime import datetime, timedelta
 from django.db.models import Sum, F
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class TagsListCreate(generics.ListCreateAPIView):
@@ -95,6 +96,7 @@ class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
 
 class ExtractsForWorkerList(generics.ListAPIView):
     serializer_class = ExtractsSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         worker_id = self.kwargs['user']

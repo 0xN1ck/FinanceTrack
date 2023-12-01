@@ -73,3 +73,16 @@ export const isAdmin = () => {
   }
   return false; // Если токен отсутствует, предположим, что пользователь не является администратором
 };
+
+export const getDataOfUser = () => {
+  const token = localStorage.getItem("token"); // Получите JWT-токен из localStorage
+  if (token) {
+    const decodedToken = jwt_decode(token);
+    return {
+      username: decodedToken.username,
+      email: decodedToken.email,
+      id: decodedToken.user_id,
+    }; // Верните значение поля is_admin из декодированного токена
+  }
+  return false; // Если токен отсутствует, предположим, что пользователь не является администратором
+};

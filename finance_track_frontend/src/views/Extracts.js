@@ -10,21 +10,28 @@ import {
   Table,
   UncontrolledDropdown,
   DropdownToggle,
-  DropdownMenu, DropdownItem
+  DropdownMenu,
+  DropdownItem,
+  CardBody,
+  CardTitle,
+  CardText,
 } from "reactstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import Header from "components/Headers/Header.js";
 import PaginationForTable from "components/Pagination/PaginationForTable";
+import DetailsReportForm from "components/Forms/DetailsReportForm";
 
 
 import {isAdmin} from "../actions/authActions";
 import {
   getExtracts,
   getTotalPagesForExtracts,
+  getExtractsByWorkerId,
   deleteExtracts,
   createExtracts,
   updateExtracts
 } from "../actions/extractActions";
+import {getDataOfUser} from "../actions/authActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
@@ -32,29 +39,47 @@ import moment from "moment/moment";
 
 const Extracts = () => {
   const [data, setData] = useState([]);
+  const [dataForUser, setDataForUser] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
+  const [modalData, setModalData] = useState(null); // Данные для модального окна
 
   useEffect(() => {
-    getTotalPagesForExtracts()
-      .then((response) => {
-        setTotalPages(response.total_pages);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-    getExtracts(1, pageSize)
-      .then(response => {
-        console.log(response);
-        setData(response.results);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    if (isAdmin()) {
+      getTotalPagesForExtracts()
+        .then((response) => {
+          setTotalPages(response.total_pages);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      getExtracts(1, pageSize)
+        .then(response => {
+          setData(response.results);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      const dataUser = getDataOfUser();
+      getExtractsByWorkerId(dataUser.id)
+        .then(response => {
+          setDataForUser(response);
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }, []);
 
   const handleEdit = (item) => {
@@ -132,6 +157,16 @@ const Extracts = () => {
         console.log(error);
       });
   };
+
+  const handleModalOpen = (item) => {
+    setModalData(item);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
     <>
       <Header/>
@@ -142,7 +177,6 @@ const Extracts = () => {
             <div className="col">
               <Card className="shadow">
                 <CardHeader className="bg-transparent border-0">
-                  {/* <h3 className="mb-0">Вычеты {selectedOption}</h3> */}
                   <Row>
                     <Col>
                       <h3 className="mb-0">Выписки</h3>
@@ -157,7 +191,6 @@ const Extracts = () => {
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                   <tr>
-                    {/* <th>ID</th> */}
                     <th scope="col">Username</th>
                     <th scope="col">Начальная дата</th>
                     <th scope="col">Конечная дата</th>
@@ -167,13 +200,20 @@ const Extracts = () => {
                   <tbody>
                   {data && data.length > 0 ? (
                     data
-                      .sort((a, b) => b.id - a.id) // Сортируем данные по полю id в обратном порядке
+                      .sort((a, b) => b.id - a.id)
                       .map((item) => (
                         <tr key={item.id}>
-                          {/* <td>{item.id}</td> */}
                           <td>{item.user.username}</td>
-                          <td>{moment(item.date_start).locale('ru').format('D MMMM YYYY [г.]')}</td>
-                          <td>{moment(item.date_end).locale('ru').format('D MMMM YYYY [г.]')}</td>
+                          <td>
+                            {moment(item.date_start)
+                              .locale("ru")
+                              .format("D MMMM YYYY [г.]")}
+                          </td>
+                          <td>
+                            {moment(item.date_end)
+                              .locale("ru")
+                              .format("D MMMM YYYY [г.]")}
+                          </td>
                           <td className="text-right">
                             <UncontrolledDropdown>
                               <DropdownToggle
@@ -185,7 +225,10 @@ const Extracts = () => {
                               >
                                 <i className="fas fa-ellipsis-v"/>
                               </DropdownToggle>
-                              <DropdownMenu className="dropdown-menu-arrow" right>
+                              <DropdownMenu
+                                className="dropdown-menu-arrow"
+                                right
+                              >
                                 <DropdownItem onClick={() => handleEdit(item)}>
                                   Просмотр
                                 </DropdownItem>
@@ -214,7 +257,38 @@ const Extracts = () => {
           </Row>
         </Container>
       ) : (
-        <h1>Недостаточно прав</h1>
+        <Container className="mt-3" fluid>
+          <Row className="mt-5">
+            {dataForUser && dataForUser.length > 0 ? (
+              dataForUser.map((item) => (
+                <Col key={item.id} xs={12} sm={6} md={3} className="mb-3">
+                  <Card style={{width: "100%"}}>
+                    <CardBody>
+                      <CardTitle tag="h5">{item.user.username}</CardTitle>
+                      <CardText>
+                        Начальная дата:{" "}
+                        {moment(item.date_start).locale("ru").format("D MMMM YYYY [г.]")}
+                      </CardText>
+                      <CardText>
+                        Конечная дата:{" "}
+                        {moment(item.date_end).locale("ru").format("D MMMM YYYY [г.]")}
+                      </CardText>
+                      <Button
+                        color="primary"
+                        href="#pablo"
+                        onClick={() => handleModalOpen(item)} // Открытие модального окна при нажатии на кнопку
+                      >
+                        Детали
+                      </Button>
+                    </CardBody>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <p>Нет данных для отображения</p>
+            )}
+          </Row>
+        </Container>
       )}
 
       {isFormOpen && (
@@ -228,18 +302,18 @@ const Extracts = () => {
       {isAddFormOpen && (
         <ReportForm
           item={{
-            "id": null,
-            "user": null,
-            "date_start": null,
-            "date_end": null,
-            "payment": null,
-            "income": null,
-            "expense": null,
-            "amount_of_consumables": null,
-            "amount_commission_for_deposits": null,
-            "debt": null,
-            "total": null,
-            "user_id": null,
+            id: null,
+            user: null,
+            date_start: null,
+            date_end: null,
+            payment: null,
+            income: null,
+            expense: null,
+            amount_of_consumables: null,
+            amount_commission_for_deposits: null,
+            debt: null,
+            total: null,
+            user_id: null
           }}
           onClose={() => setIsAddFormOpen(false)}
           onSubmit={handleAddFormSubmit}
@@ -247,7 +321,12 @@ const Extracts = () => {
         />
       )}
 
-
+      {/* Модальное окно */}
+      <DetailsReportForm
+        isOpen={modalOpen}
+        toggle={handleModalClose}
+        modalData={modalData}
+      />
     </>
   );
 };
