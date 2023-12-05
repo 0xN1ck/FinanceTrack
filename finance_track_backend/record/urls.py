@@ -16,6 +16,8 @@ urlpatterns = [
     path('extracts/get-total-pages/', ExtractsGetTotalPagesSerializer.as_view()),  # test
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
+    path('statistics/', GetStatsAll.as_view(), name='user-statistics'),
+    path('statistics/<int:user_id>/', GetStats.as_view(), name='user-statistics'),
     path('user/', UserList.as_view()),
     path('worker/', UserWorkerList.as_view()),
     path('extract-create/', ExtractsViewSet.as_view({'post': 'create'})),

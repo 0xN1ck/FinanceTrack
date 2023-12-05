@@ -6,7 +6,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework import status
+from rest_framework.exceptions import APIException
+
+
+class UnauthorizedAccess(APIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = 'У вас нет разрешения на доступ к этому ресурсу.'
+    default_code = 'unauthorized_access'
 
 
 class TagsListCreate(generics.ListCreateAPIView):
@@ -27,6 +35,32 @@ class DeductionsListCreate(generics.ListCreateAPIView):
 class DeductionsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Deductions.objects.all()
     serializer_class = DeductionsSerializer
+
+
+class DeductionsForWorkerList(generics.ListAPIView):
+    queryset = Deductions.objects.all()
+    serializer_class = DeductionsSerializer
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 10
+
+    def get_queryset(self):
+        worker_id = self.kwargs['user']
+        queryset = Deductions.objects.filter(user_id=worker_id).order_by(F('id')).reverse()
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            self.pagination_class.page_size = int(page_size)
+        return queryset
+
+
+class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
+    serializer_class = DeductionsGetTotalPagesSerializer
+    page_size = 10
+
+    def get_object(self):
+        worker_id = self.kwargs['user']
+        total_items = Deductions.objects.filter(user_id=worker_id).count()
+        total_pages = (total_items + self.page_size - 1) // self.page_size
+        return {'total_pages': total_pages}
 
 
 class ExtractsCreateList(generics.ListCreateAPIView):
@@ -56,42 +90,6 @@ class ExtractsGetTotalPagesSerializer(generics.RetrieveAPIView):
 class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Extracts.objects.all()
     serializer_class = ExtractsSerializer
-
-
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserWorkerList(generics.ListAPIView):
-    queryset = User.objects.filter(is_superuser=False)
-    serializer_class = UserSerializer
-
-
-class DeductionsForWorkerList(generics.ListAPIView):
-    queryset = Deductions.objects.all()
-    serializer_class = DeductionsSerializer
-    pagination_class = PageNumberPagination
-    pagination_class.page_size = 10
-
-    def get_queryset(self):
-        worker_id = self.kwargs['user']
-        queryset = Deductions.objects.filter(user_id=worker_id).order_by(F('id')).reverse()
-        page_size = self.request.query_params.get('page_size')
-        if page_size:
-            self.pagination_class.page_size = int(page_size)
-        return queryset
-
-
-class DeductionsGetTotalPagesSerializer(generics.RetrieveAPIView):
-    serializer_class = DeductionsGetTotalPagesSerializer
-    page_size = 10
-
-    def get_object(self):
-        worker_id = self.kwargs['user']
-        total_items = Deductions.objects.filter(user_id=worker_id).count()
-        total_pages = (total_items + self.page_size - 1) // self.page_size
-        return {'total_pages': total_pages}
 
 
 class ExtractsForWorkerList(generics.ListAPIView):
@@ -162,5 +160,67 @@ class ExtractsViewSet(viewsets.GenericViewSet):
         return Response(serializer.data)
 
 
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserWorkerList(generics.ListAPIView):
+    queryset = User.objects.filter(is_superuser=False)
+    serializer_class = UserSerializer
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+class GetStats(generics.RetrieveAPIView):
+    serializer_class = GetStatsSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Extracts.objects.filter(user_id=user_id)
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        total = queryset.aggregate(
+            total_income=Sum('income'),
+            total_expense=Sum('expense'),
+            total_amount_of_consumables=Sum('amount_of_consumables'),
+            total_amount_commission_for_deposits=Sum('amount_commission_for_deposits'),
+            total_debt=Sum('debt'),
+            total=Sum('total')
+        )
+        return total
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user_id = self.kwargs['user_id']
+        if not request.user.is_superuser and int(user_id) != request.user.id:
+            raise UnauthorizedAccess()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class GetStatsAll(generics.ListAPIView):
+    serializer_class = GetStatsSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        return Extracts.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise UnauthorizedAccess()
+
+        queryset = self.get_queryset()
+        total = queryset.aggregate(
+            total_income=Sum('income'),
+            total_expense=Sum('expense'),
+            total_amount_of_consumables=Sum('amount_of_consumables'),
+            total_amount_commission_for_deposits=Sum('amount_commission_for_deposits'),
+            total_debt=Sum('debt'),
+            total=Sum('total')
+        )
+        serializer = self.get_serializer(total)
+        return Response(serializer.data)
