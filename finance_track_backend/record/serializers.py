@@ -72,14 +72,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class GetStatsSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(required=False)
     total_income = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total_expense = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total_amount_of_consumables = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total_amount_commission_for_deposits = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total_debt = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
-
-    # class Meta:
-    #     model = Extracts
-    #     fields = '__all__'
 

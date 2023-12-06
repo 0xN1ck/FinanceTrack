@@ -20,5 +20,6 @@ urlpatterns = [
     path('statistics/<int:user_id>/', GetStats.as_view(), name='user-statistics'),
     path('user/', UserList.as_view()),
     path('worker/', UserWorkerList.as_view()),
+    path('worker/<int:id>/', UserWorkerDetail.as_view()),
     path('extract-create/', ExtractsViewSet.as_view({'post': 'create'})),
 ]

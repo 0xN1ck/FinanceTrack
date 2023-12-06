@@ -170,6 +170,12 @@ class UserWorkerList(generics.ListAPIView):
     serializer_class = UserSerializer
 
 
+class UserWorkerDetail(generics.RetrieveAPIView):
+    queryset = User.objects.filter(is_superuser=False)
+    serializer_class = UserSerializer
+    lookup_field = 'id'
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -222,5 +228,21 @@ class GetStatsAll(generics.ListAPIView):
             total_debt=Sum('debt'),
             total=Sum('total')
         )
-        serializer = self.get_serializer(total)
-        return Response(serializer.data)
+
+        users_stats = queryset.values(
+            'user_id'
+        ).annotate(
+            total_income=Sum('income'),
+            total_expense=Sum('expense'),
+            total_amount_of_consumables=Sum('amount_of_consumables'),
+            total_amount_commission_for_deposits=Sum('amount_commission_for_deposits'),
+            total_debt=Sum('debt'),
+            total=Sum('total')
+        )
+
+        serializer = self.get_serializer(users_stats, many=True)
+        response_data = {
+            'total': total,
+            'users_stats': serializer.data
+        }
+        return Response(response_data)
