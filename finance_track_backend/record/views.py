@@ -141,12 +141,16 @@ class ExtractsViewSet(viewsets.GenericViewSet):
                 float(data['debt'])
         )
 
+        payment = 0.0
+        if total > 0:
+            payment = float(total * 0.3)
+
         # Создание нового объекта Extracts
         extract = Extracts.objects.create(
             user=user,
             date_start=data['date_start'],
             date_end=data['date_end'],
-            payment=data['payment'],
+            payment=payment,
             income=data['income'],
             expense=data['expense'],
             amount_of_consumables=amount_of_consumables * -1,
