@@ -19,6 +19,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 
 import Header from "components/Headers/Header.js";
 import EditForm from "components/Forms/EditForm";
+import CreateOrUpdateTagForm from "components/Forms/CreateOrUpdateTagForm";
 import PaginationForTable from "components/Pagination/PaginationForTable";
 import {
   getWorkers,
@@ -40,6 +41,10 @@ const Accounting = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(0);
+
+  const [isTagFormOpen, setIsTagFormOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState(null);
+
 
   useEffect(() => {
     getWorkers()
@@ -190,6 +195,19 @@ const Accounting = () => {
       });
   };
 
+  const handleEditTag = (tag) => {
+    setSelectedTag(tag);
+    setIsTagFormOpen(true);
+  };
+
+  const handleTagFormSubmit = (formData) => {
+    // Ваша логика для отправки запроса на изменение или создание тега
+    // Обновление данных и закрытие формы
+
+    setIsTagFormOpen(false);
+  };
+
+
   return (
     <>
       <Header/>
@@ -220,6 +238,9 @@ const Accounting = () => {
                   <Col className="text-right">
                     <Button color="primary" onClick={handleAdd} disabled={selectedOption.length === 0}>
                       Добавить
+                    </Button>
+                    <Button color="info" onClick={() => handleEditTag(selectedTag)}>
+                      Изменить Tag
                     </Button>
                   </Col>
                 </Row>
@@ -294,9 +315,9 @@ const Accounting = () => {
 
               {/* Pagination */}
               <PaginationForTable
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
             </Card>
           </div>
@@ -337,6 +358,13 @@ const Accounting = () => {
           onClose={() => setIsAddFormOpen(false)}
           onSubmit={handleAddFormSubmit}
           isCreateMode={true}
+        />
+      )}
+      {isTagFormOpen && (
+        <CreateOrUpdateTagForm
+          tag={selectedTag}
+          onClose={() => setIsTagFormOpen(false)}
+          onSubmit={handleTagFormSubmit}
         />
       )}
     </>
