@@ -22,6 +22,11 @@ class TagsListCreate(generics.ListCreateAPIView):
     serializer_class = TagsSerializer
 
 
+class TagsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tags.objects.all()
+    serializer_class = TagsSerializer
+
+
 class AssigneesListCreate(generics.ListCreateAPIView):
     queryset = Assignees.objects.all()
     serializer_class = AssigneesSerializer

@@ -7,6 +7,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('login/', MyTokenObtainPairView.as_view()),
     path('tags/', TagsListCreate.as_view()),
+    path('tag/<int:pk>/', TagsRetrieveUpdateDestroy.as_view()),
     path('deductions/', DeductionsListCreate.as_view()),
     path('deduction/<int:pk>/', DeductionsRetrieveUpdateDestroy.as_view()),
     path('deduction/worker/<int:user>/', DeductionsForWorkerList.as_view()),
