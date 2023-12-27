@@ -1,64 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../actions/authActions";
-import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import { ToastContainer, toast } from 'react-toastify';
+import { Button, FormGroup, Input, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import {
+  getTagsList,
+  editTag,
+  deleteTag,
+  createTag
+} from "../../actions/tagsActions";
 
 const CreateOrUpdateTagForm = ({ onClose }) => {
   const [newTagName, setNewTagName] = useState("");
   const [tagsList, setTagsList] = useState([]);
-  const [tagName, setTagName] = useState("");
 
-  useEffect(() => {
-    api.get("http://localhost:8000/api/tags/")
+useEffect(() => {
+    getTagsList()
       .then(response => {
-        setTagsList(response.data);
+        setTagsList(response);
       })
       .catch(error => {
         console.error("Ошибка загрузки списка тегов:", error);
       });
   }, []);
 
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
-
   const handleEdit = (tagId, newName) => {
-    api.put(`http://localhost:8000/api/tag/${tagId}/`, { name: newName })
-      .then(response => {
-        console.log("Тег успешно изменен:", response.data);
-        setTagsList(prevTags => prevTags.map(t => (t.id === tagId ? { ...t, name: newName } : t)));
-        notifySuccess("Тег успешно изменен");
+    editTag(tagId, newName)
+      .then(updatedTag => {
+        setTagsList(prevTags => prevTags.map(t => (t.id === tagId ? { ...t, name: updatedTag.name } : t)));
       })
       .catch(error => {
-        console.error("Ошибка при изменении тега:", error);
-        notifyError("Ошибка при изменении тега");
+        // Handle error
       });
   };
 
   const handleDelete = (tagId) => {
-    api.delete(`http://localhost:8000/api/tag/${tagId}/`)
-      .then(response => {
-        console.log("Тег успешно удален:", response.data);
-        setTagsList(prevTags => prevTags.filter(t => t.id !== tagId));
-        notifySuccess("Тег успешно удален");
+    deleteTag(tagId)
+      .then(deletedTagId => {
+        setTagsList(prevTags => prevTags.filter(t => t.id !== deletedTagId));
       })
       .catch(error => {
-        console.error("Ошибка при удалении тега:", error);
-        notifyError("Ошибка при удалении тега");
+        // Handle error
       });
   };
 
   const handleCreate = () => {
-    api.post("http://localhost:8000/api/tags/", { name: newTagName })
-      .then(response => {
-        console.log("Новый тег успешно создан:", response.data);
-        setTagsList(prevTags => [...prevTags, response.data]);
+    createTag(newTagName)
+      .then(createdTag => {
+        setTagsList(prevTags => [...prevTags, createdTag]);
         setNewTagName("");
-        notifySuccess("Новый тег успешно создан");
       })
       .catch(error => {
-        console.error("Ошибка при создании тега:", error);
-        notifyError("Ошибка при создании тега");
+        // Handle error
       });
   };
 
