@@ -227,18 +227,29 @@ const Accounting = () => {
       {/* Table */}
       <Container className="mt-3" fluid>
         <Row className="mt-5">
-          <div className="col">
+            <Col>
             <Card className="shadow">
               <CardHeader className="bg-transparent border-0">
-                <Row>
-                  <Col>
-                    <h3 className="mb-0">Вычеты {selectedOption}</h3>
+                <Row className="d-flex justify-content-between align-items-center flex-nowrap">
+                  <Col xs="6" md="6" className="d-flex align-items-center">
+                    <h3 className="mb-0 w-100">Вычеты {selectedOption}</h3>
                   </Col>
-                  <Col className="text-right">
-                    <Button color="info" onClick={() => handleEditTag(selectedTag)}>
+                  <Col xs="6" md="6" className="d-flex justify-content-end align-items-center">
+                    <Button
+                      color="info"
+                      onClick={() => handleEditTag(selectedTag)}
+                      size={window.innerWidth <= 576 ? "sm" : null}
+                      className="mr-2 mr-md-0" // Margin on mobile
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
                       Изменить Tag
                     </Button>
-                    <Button color="primary" onClick={handleAdd} disabled={selectedOption.length === 0}>
+                    <Button
+                      color="primary"
+                      onClick={handleAdd}
+                      disabled={selectedOption.length === 0}
+                      size={window.innerWidth <= 576 ? "sm" : null}
+                    >
                       Добавить
                     </Button>
                   </Col>
@@ -319,7 +330,7 @@ const Accounting = () => {
                 onPageChange={handlePageChange}
               />
             </Card>
-          </div>
+            </Col>
         </Row>
       </Container>
       {isFormOpen && (
