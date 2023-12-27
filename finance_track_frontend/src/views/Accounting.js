@@ -195,8 +195,7 @@ const Accounting = () => {
       });
   };
 
-  const handleEditTag = (tag) => {
-    setSelectedTag(tag);
+  const handleEditTag = () => {
     setIsTagFormOpen(true);
   };
 
@@ -236,11 +235,11 @@ const Accounting = () => {
                     <h3 className="mb-0">Вычеты {selectedOption}</h3>
                   </Col>
                   <Col className="text-right">
-                    <Button color="primary" onClick={handleAdd} disabled={selectedOption.length === 0}>
-                      Добавить
-                    </Button>
                     <Button color="info" onClick={() => handleEditTag(selectedTag)}>
                       Изменить Tag
+                    </Button>
+                    <Button color="primary" onClick={handleAdd} disabled={selectedOption.length === 0}>
+                      Добавить
                     </Button>
                   </Col>
                 </Row>
@@ -362,9 +361,7 @@ const Accounting = () => {
       )}
       {isTagFormOpen && (
         <CreateOrUpdateTagForm
-          tag={selectedTag}
           onClose={() => setIsTagFormOpen(false)}
-          onSubmit={handleTagFormSubmit}
         />
       )}
     </>
