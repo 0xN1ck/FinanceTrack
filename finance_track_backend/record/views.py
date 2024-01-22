@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from django.utils import timezone
 
 
 class UnauthorizedAccess(APIException):
@@ -95,6 +96,60 @@ class ExtractsGetTotalPagesSerializer(generics.RetrieveAPIView):
 class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Extracts.objects.all()
     serializer_class = ExtractsSerializer
+
+    def perform_update(self, serializer):
+        data = self.request.data
+
+        # Получение пользователя по ID
+        user_id = data['user_id']
+        user = User.objects.get(id=user_id)
+
+        # Расчет суммы для amount_of_consumables
+        date_start = datetime.strptime(data['date_start'], '%Y-%m-%d')
+        date_end = datetime.strptime(data['date_end'], '%Y-%m-%d') + timedelta(days=1)
+        consumables_sum = Deductions.objects.filter(user=user,
+                                                    date__range=[date_start, date_end]).aggregate(
+            Sum('cost_of_consumables'))
+        amount_of_consumables = consumables_sum['cost_of_consumables__sum'] or 0
+
+        # Расчет суммы для amount_commission_for_deposits
+        commission_sum = Deductions.objects.filter(user=user,
+                                                   date__range=[date_start, date_end]).aggregate(
+            Sum('commission_for_deposits'))
+        amount_commission_for_deposits = commission_sum['commission_for_deposits__sum'] or 0
+
+        for i in data.keys():
+            if data.get(i) == '':
+                data[i] = 0
+
+        # Расчет значения для total
+        total = (
+                float(data['income']) +
+                float(data['expense']) +
+                float(amount_of_consumables * -1) +
+                float(amount_commission_for_deposits * -1) +
+                float(data['debt'])
+        )
+
+        payment = 0.0
+        if total > 0:
+            payment = float(total * 0.3)
+
+        # Обновление данных в объекте Extracts
+        serializer.save(
+            user=user,
+            amount_of_consumables=amount_of_consumables * -1,
+            amount_commission_for_deposits=amount_commission_for_deposits * -1,
+            total=total,
+            payment=payment
+        )
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class ExtractsForWorkerList(generics.ListAPIView):
