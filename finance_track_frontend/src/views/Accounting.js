@@ -45,6 +45,11 @@ const Accounting = () => {
   const [isTagFormOpen, setIsTagFormOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
 
+  const dataWithWeekNumbers = data.map(item => ({
+    ...item,
+    weekNumber: moment(item.date).isoWeek(), // используем moment для определения номера недели
+  }));
+
 
   useEffect(() => {
     getWorkers()
@@ -227,7 +232,7 @@ const Accounting = () => {
       {/* Table */}
       <Container className="mt-3" fluid>
         <Row className="mt-5">
-            <Col>
+          <Col>
             <Card className="shadow">
               <CardHeader className="bg-transparent border-0">
                 <Row className="d-flex justify-content-between align-items-center flex-nowrap">
@@ -240,7 +245,7 @@ const Accounting = () => {
                       onClick={() => handleEditTag(selectedTag)}
                       size={window.innerWidth <= 576 ? "sm" : null}
                       className="mr-2 mr-md-0" // Margin on mobile
-                      style={{ whiteSpace: 'nowrap' }}
+                      style={{whiteSpace: 'nowrap'}}
                     >
                       Изменить Tag
                     </Button>
@@ -271,13 +276,25 @@ const Accounting = () => {
                 </thead>
                 <tbody>
                 {/* Table body rendering */}
-                {data && data.length > 0 ? (
-                  data
+                {dataWithWeekNumbers && dataWithWeekNumbers.length > 0 ? (
+                  dataWithWeekNumbers
                     .sort((a, b) => b.id - a.id)
-                    //.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
-                    .map((item, index) => {
+                    .map((item, index, array) => {
                       const rowNumber = index + 1;
+
+                      // Проверка изменения номера недели
+                      const isWeekChange = index === 0 || item.weekNumber !== array[index - 1].weekNumber;
+
+
                       return (
+                        <>
+                        {isWeekChange && (
+                          <tr key={`week-separator-${item.id}`}>
+                            <td colSpan="9" className="text-center text-dark font-weight-bold">
+                              Неделя {item.weekNumber} {/* Можно заменить на ваш формат вывода номера недели */}
+                            </td>
+                          </tr>
+                        )}
                         <tr key={item.id}>
                           <td>{rowNumber}</td>
                           <td>{item.user.username}</td>
@@ -313,70 +330,79 @@ const Accounting = () => {
                             </UncontrolledDropdown>
                           </td>
                         </tr>
-                      );
-                    })
-                ) : (
-                  <tr>
-                    <td colSpan="9">Нет данных для отображения</td>
-                  </tr>
-                )}
-                </tbody>
-              </Table>
+                        </>
+                        );
+                        })
+                        ) : (
+                        <tr>
+                          <td colSpan="9">Нет данных для отображения</td>
+                        </tr>
+                        )}
+                        </tbody>
+                    </Table>
 
-              {/* Pagination */}
-              <PaginationForTable
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </Card>
-            </Col>
-        </Row>
-      </Container>
-      {isFormOpen && (
-        <EditForm
-          item={selectedItem}
-          onClose={handleFormClose}
-          onSubmit={handleFormSubmit}
-          isCreateMode={false}
-        />
-      )}
-      {isAddFormOpen && (
-        <EditForm
-          item={{
-            id: null,
-            user: workers.filter((user) => user.username === selectedOption[0])[0],
-            tag: {
-              id: 3,
-              name: "bm",
-            },
-            cost_of_consumables: null,
-            amount_of_deposits: null,
-            commission_for_deposits: null,
-            assignee: {
-              id: 1,
-              user: {
-                id: 1,
-                username: "maxim",
-              },
-            },
-            date: new Date().toISOString(),
-            user_id: workers.filter((user) => user.username === selectedOption[0])[0].id,
-            assignee_id: 1,
-            tag_id: 3,
-          }}
-          onClose={() => setIsAddFormOpen(false)}
-          onSubmit={handleAddFormSubmit}
-          isCreateMode={true}
-        />
-      )}
-      {isTagFormOpen && (
-        <CreateOrUpdateTagForm
-          onClose={() => setIsTagFormOpen(false)}
-        />
-      )}
-    </>
-  );
-};
+                      {/* Pagination */
+                      }
+                      <PaginationForTable
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                      />
+                    </Card>
+                    </Col>
+                    </Row>
+                    </Container>
+                      {
+                        isFormOpen && (
+                          <EditForm
+                            item={selectedItem}
+                            onClose={handleFormClose}
+                            onSubmit={handleFormSubmit}
+                            isCreateMode={false}
+                          />
+                        )
+                      }
+                      {
+                        isAddFormOpen && (
+                          <EditForm
+                            item={{
+                              id: null,
+                              user: workers.filter((user) => user.username === selectedOption[0])[0],
+                              tag: {
+                                id: 3,
+                                name: "bm",
+                              },
+                              cost_of_consumables: null,
+                              amount_of_deposits: null,
+                              commission_for_deposits: null,
+                              assignee: {
+                                id: 1,
+                                user: {
+                                  id: 1,
+                                  username: "maxim",
+                                },
+                              },
+                              date: new Date().toISOString(),
+                              user_id: workers.filter((user) => user.username === selectedOption[0])[0].id,
+                              assignee_id: 1,
+                              tag_id: 3,
+                            }}
+                            onClose={() => setIsAddFormOpen(false)}
+                            onSubmit={handleAddFormSubmit}
+                            isCreateMode={true}
+                          />
+                        )
+                      }
+                      {
+                        isTagFormOpen && (
+                          <CreateOrUpdateTagForm
+                            onClose={() => setIsTagFormOpen(false)}
+                          />
+                        )
+                      }
+                    </>
+                    )
+                      ;
+                    };
 
-export default Accounting;
+                  export default Accounting;
