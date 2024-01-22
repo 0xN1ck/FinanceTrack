@@ -18,13 +18,13 @@ var routes = [
         component: <Extracts />,
         layout: "/home",
     },
-    {
-        path: "/accounting",
-        name: "Учет",
-        icon: "ni ni-money-coins text-success",
-        component: <Accounting />,
-        layout: "/home",
-    },
+    // {
+    //     path: "/accounting",
+    //     name: "Учет",
+    //     icon: "ni ni-money-coins text-success",
+    //     component: <Accounting />,
+    //     layout: "/home",
+    // },
     {
         path: "/login",
         name: "Авторизация",

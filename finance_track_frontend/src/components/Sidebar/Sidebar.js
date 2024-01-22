@@ -55,6 +55,9 @@ const Sidebar = (props) => {
         if (prop.path === "/accounting" && !isAdmin()) {
         return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
       }
+        if (prop.path === "/extracts" && !isAdmin()) {
+        return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
+      }
       return (
         <NavItem key={key}>
           <NavLink
@@ -98,7 +101,7 @@ const Sidebar = (props) => {
     dispatch(logout())
     setTimeout(() => {
       navigate('/auth/login');
-    }, 100); 
+    }, 100);
   }
 
   return (
@@ -128,21 +131,21 @@ const Sidebar = (props) => {
         ) : null}
         {/* User */}
         <Nav className="align-items-center d-md-none">
-          <UncontrolledDropdown nav>
-            <DropdownToggle nav className="nav-link-icon">
-              <i className="ni ni-bell-55" />
-            </DropdownToggle>
-            <DropdownMenu
-              aria-labelledby="navbar-default_dropdown_1"
-              className="dropdown-menu-arrow"
-              right
-            >
-              <DropdownItem>Action</DropdownItem>
-              <DropdownItem>Another action</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>Something else here</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
+          {/*<UncontrolledDropdown nav>*/}
+          {/*  <DropdownToggle nav className="nav-link-icon">*/}
+          {/*    <i className="ni ni-bell-55" />*/}
+          {/*  </DropdownToggle>*/}
+          {/*  <DropdownMenu*/}
+          {/*    aria-labelledby="navbar-default_dropdown_1"*/}
+          {/*    className="dropdown-menu-arrow"*/}
+          {/*    right*/}
+          {/*  >*/}
+          {/*    <DropdownItem>Action</DropdownItem>*/}
+          {/*    <DropdownItem>Another action</DropdownItem>*/}
+          {/*    <DropdownItem divider />*/}
+          {/*    <DropdownItem>Something else here</DropdownItem>*/}
+          {/*  </DropdownMenu>*/}
+          {/*</UncontrolledDropdown>*/}
           <UncontrolledDropdown nav>
             <DropdownToggle nav>
               <Media className="align-items-center">
@@ -158,22 +161,22 @@ const Sidebar = (props) => {
               <DropdownItem className="noti-title" header tag="div">
                 <h6 className="text-overflow m-0">Welcome!</h6>
               </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-single-02" />
-                <span>My profile</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-settings-gear-65" />
-                <span>Settings</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-calendar-grid-58" />
-                <span>Activity</span>
-              </DropdownItem>
-              <DropdownItem to="/admin/user-profile" tag={Link}>
-                <i className="ni ni-support-16" />
-                <span>Support</span>
-              </DropdownItem>
+              {/*<DropdownItem to="/admin/user-profile" tag={Link}>*/}
+              {/*  <i className="ni ni-single-02" />*/}
+              {/*  <span>My profile</span>*/}
+              {/*</DropdownItem>*/}
+              {/*<DropdownItem to="/admin/user-profile" tag={Link}>*/}
+              {/*  <i className="ni ni-settings-gear-65" />*/}
+              {/*  <span>Settings</span>*/}
+              {/*</DropdownItem>*/}
+              {/*<DropdownItem to="/admin/user-profile" tag={Link}>*/}
+              {/*  <i className="ni ni-calendar-grid-58" />*/}
+              {/*  <span>Activity</span>*/}
+              {/*</DropdownItem>*/}
+              {/*<DropdownItem to="/admin/user-profile" tag={Link}>*/}
+              {/*  <i className="ni ni-support-16" />*/}
+              {/*  <span>Support</span>*/}
+              {/*</DropdownItem>*/}
               <DropdownItem divider />
               <DropdownItem href="#pablo" onClick={handleLogout}>
                 <i className="ni ni-user-run" />
@@ -213,21 +216,21 @@ const Sidebar = (props) => {
             </Row>
           </div>
           {/* Form */}
-          <Form className="mt-4 mb-3 d-md-none">
-            <InputGroup className="input-group-rounded input-group-merge">
-              <Input
-                aria-label="Search"
-                className="form-control-rounded form-control-prepended"
-                placeholder="Search"
-                type="search"
-              />
-              <InputGroupAddon addonType="prepend">
-                <InputGroupText>
-                  <span className="fa fa-search" />
-                </InputGroupText>
-              </InputGroupAddon>
-            </InputGroup>
-          </Form>
+          {/*<Form className="mt-4 mb-3 d-md-none">*/}
+          {/*  <InputGroup className="input-group-rounded input-group-merge">*/}
+          {/*    <Input*/}
+          {/*      aria-label="Search"*/}
+          {/*      className="form-control-rounded form-control-prepended"*/}
+          {/*      placeholder="Search"*/}
+          {/*      type="search"*/}
+          {/*    />*/}
+          {/*    <InputGroupAddon addonType="prepend">*/}
+          {/*      <InputGroupText>*/}
+          {/*        <span className="fa fa-search" />*/}
+          {/*      </InputGroupText>*/}
+          {/*    </InputGroupAddon>*/}
+          {/*  </InputGroup>*/}
+          {/*</Form>*/}
           {/* Navigation */}
           <Nav navbar>{createLinks(routes)}</Nav>
           {/* Divider */}
