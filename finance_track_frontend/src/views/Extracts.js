@@ -32,6 +32,7 @@ import {
   updateExtracts
 } from "../actions/extractActions";
 import {getDataOfUser} from "../actions/authActions";
+import {getStatsForUser, getStatsForAllUsers} from "../actions/getStatsActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
@@ -48,6 +49,7 @@ const Extracts = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
   const [modalData, setModalData] = useState(null); // Данные для модального окна
+  const [updateHeader, setUpdateHeader] = useState(false);
 
   useEffect(() => {
     if (isAdmin()) {
@@ -61,6 +63,7 @@ const Extracts = () => {
       getExtracts(1, pageSize)
         .then(response => {
           setData(response.results);
+          setUpdateHeader(prevState => !prevState);
         })
         .catch(error => {
           console.log(error);
@@ -74,7 +77,7 @@ const Extracts = () => {
       getExtractsByWorkerId(dataUser.id)
         .then(response => {
           setDataForUser(response);
-          console.log(response);
+          setUpdateHeader(prevState => !prevState);
         })
         .catch(error => {
           console.log(error);
@@ -82,9 +85,9 @@ const Extracts = () => {
     }
   }, []);
 
+
   const handleEdit = (item) => {
     setSelectedItem(item);
-    console.log(item);
     setIsFormOpen(true);
   };
 
@@ -94,6 +97,7 @@ const Extracts = () => {
         getExtracts(currentPage + 1, pageSize)
           .then(response => {
             setData(response.results);
+            setUpdateHeader(prevState => !prevState);
           })
           .catch(error => {
             console.log(error);
@@ -102,9 +106,11 @@ const Extracts = () => {
       .catch(error => {
         console.log(error);
       });
+
   };
 
   const handleFormClose = () => {
+    setUpdateHeader(prevState => !prevState);
     setIsFormOpen(false);
   };
 
@@ -114,6 +120,7 @@ const Extracts = () => {
         getExtracts(currentPage + 1, pageSize)
           .then(response => {
             setData(response.results);
+            setUpdateHeader(prevState => !prevState);
           })
           .catch(error => {
             console.log(error);
@@ -135,6 +142,7 @@ const Extracts = () => {
         getExtracts(currentPage + 1, pageSize)
           .then(response => {
             setData(response.results);
+            setUpdateHeader(prevState => !prevState);
           })
           .catch(error => {
             console.log(error);
@@ -152,6 +160,7 @@ const Extracts = () => {
       .then((response) => {
         console.log(response);
         setData(response.results);
+        setUpdateHeader(prevState => !prevState);
       })
       .catch((error) => {
         console.log(error);
@@ -164,12 +173,13 @@ const Extracts = () => {
   };
 
   const handleModalClose = () => {
+    setUpdateHeader(prevState => !prevState);
     setModalOpen(false);
   };
 
   return (
     <>
-      <Header/>
+      <Header update={updateHeader}/>
       {isAdmin() ? (
         /* Table */
         <Container className="mt-3" fluid>

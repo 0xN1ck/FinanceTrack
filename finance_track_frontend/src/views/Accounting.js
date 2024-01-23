@@ -85,7 +85,6 @@ const Accounting = () => {
       })
     getDeductionsByWorkerId(workerId, 1, pageSize)
       .then((response) => {
-        console.log(response)
         setData(response.results);
       })
       .catch((error) => {
@@ -137,7 +136,6 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        console.log(currentPage, pageSize);
         getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
           .then((response) => {
             setData(response.results);
@@ -287,7 +285,7 @@ const Accounting = () => {
 
 
                       return (
-                        <>
+                        <React.Fragment key={item.id}>
                         {isWeekChange && (
                           <tr key={`week-separator-${item.id}`}>
                             <td colSpan="9" className="text-center text-dark font-weight-bold">
@@ -330,7 +328,7 @@ const Accounting = () => {
                             </UncontrolledDropdown>
                           </td>
                         </tr>
-                        </>
+                        </React.Fragment>
                         );
                         })
                         ) : (

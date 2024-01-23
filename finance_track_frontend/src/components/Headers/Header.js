@@ -4,10 +4,11 @@ import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 import {isAdmin} from "../../actions/authActions";
 import {getStatsForUser, getStatsForAllUsers} from "../../actions/getStatsActions";
 
-const Header = () => {
+const Header = ({ update }) => {
   const [data, setData] = useState({});
 
   useEffect(() => {
+    console.log(update);
     if (!isAdmin()) {
       getStatsForUser()
         .then((response) => {
@@ -17,10 +18,7 @@ const Header = () => {
           console.log(error);
         });
     }
-  }, []);
-
-  useEffect(() => {
-    if (isAdmin()) {
+    else {
       getStatsForAllUsers()
         .then((response) => {
           setData(response.total);
@@ -29,9 +27,7 @@ const Header = () => {
           console.log(error);
         });
     }
-  }, []);
-
-  // console.log(data)
+  }, [update]);
 
 
   return (
