@@ -13,11 +13,12 @@ import
   Col
 } from "reactstrap";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Typeahead } from "react-bootstrap-typeahead";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import moment from "moment";
+
+import {api} from "../../actions/authActions";
 
 import 'moment/locale/ru';
 import "react-datepicker/dist/react-datepicker.module.css";
@@ -74,21 +75,21 @@ const EditForm = ({ item, onClose, onSubmit, isCreateMode }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const workerResponse = await axios.get('http://localhost:8000/api/worker/', {
+        const workerResponse = await api.get('/worker/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
         setWorkers(workerResponse.data);
 
-        const tagsResponse = await axios.get('http://localhost:8000/api/tags/', {
+        const tagsResponse = await api.get('/tags/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
         setTags(tagsResponse.data);
 
-        const assigneeResponse = await axios.get('http://localhost:8000/api/assignee/', {
+        const assigneeResponse = await api.get('/assignee/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
