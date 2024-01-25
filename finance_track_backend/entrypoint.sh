@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "FinanceTrackDev" ]
+if [ "$DATABASE" = "FinanceTrackProd" ]
 then
     echo "Waiting for postgres..."
 

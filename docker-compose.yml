@@ -11,7 +11,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ./finance_track_backend/.env.dev
+      - .env.dev
     environment:
       - WATCHPACK_POLLING=true
     stdin_open: true
@@ -42,6 +42,6 @@ services:
       - POSTGRES_DB=FinanceTrackDev
     ports:
       - 5432:5432
-    restart: always
+    restart: unless-stopped
 volumes:
   postgres_data:

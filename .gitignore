@@ -76,7 +76,7 @@ out/
 **/migrations/
 
 # Игнорирование файлов собранной статики Django
-**/staticfiles/
+**/static/
 
 # Игнорирование файлов виртуального окружения Python
 **/venv_django/
