@@ -11,9 +11,6 @@ const PrivateRoutes = ({ ...rest }) => {
 
   return <Outlet />;
 
-  // const token = localStorage.getItem('token');
-  // return token ? <Outlet /> : <Navigate to="/auth/login"/>
-
 }
 
 export default PrivateRoutes;

@@ -289,7 +289,7 @@ const Accounting = () => {
                         {isWeekChange && (
                           <tr key={`week-separator-${item.id}`}>
                             <td colSpan="9" className="text-center text-dark font-weight-bold">
-                              Неделя {item.weekNumber} {/* Можно заменить на ваш формат вывода номера недели */}
+                              {item.weekNumber} неделя {moment(item.date).format("YYYY")} года
                             </td>
                           </tr>
                         )}
