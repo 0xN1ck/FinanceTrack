@@ -1,36 +1,35 @@
 <img src="finance_track_frontend/src/assets/img/brand/finance-track.png" alt="FinanceTrack Logo" style="display: block; margin: 0 auto;">
 
-FinanceTrack представляет собой проект для учета данных работников для администраторов и для просмотра своей работы обычными пользователями.
+FinanceTrack is a project for managing employee data for administrators and for users to view their work.
 
-## Структура проекта
+## Project Structure
 
-### Бэкенд
+### Backend
 
-- **Dockerfile-dev**: Dockerfile для разработки бэкенда.
-- **Dockerfile-prod**: Dockerfile для продакшн бэкенда.
-- **FinanceTrack/**: Каталог с основными файлами Django приложения.
-- **db.sqlite3**: Файл базы данных SQLite.
-- **entrypoint-dev.sh**: Сценарий входа для разработки.
-- **entrypoint-prod.sh**: Сценарий входа для продакшна.
-- **manage.py**: Основной скрипт управления Django.
-- **record/**: Приложение Django для записей.
-- **requirements.txt**: Файл с зависимостями Python.
+- **Dockerfile-dev**: Dockerfile for backend development.
+- **Dockerfile-prod**: Dockerfile for backend production.
+- **FinanceTrack/**: Directory with main Django application files.
+- **entrypoint-dev.sh**: Entry script for development.
+- **entrypoint-prod.sh**: Entry script for production.
+- **manage.py**: Main Django management script.
+- **record/**: Django application for records.
+- **requirements.txt**: Python dependency file.
 
-### Фронтенд
+### Frontend
 
-- **.npmrc**: Файл настроек npm.
-- **Dockerfile-dev**: Dockerfile для разработки фронтенда.
-- **Dockerfile-prod**: Dockerfile для продакшн фронтенда.
-- **jsconfig.json**: Файл настроек JavaScript.
-- **nginx/**: Каталог с конфигурацией Nginx.
-- **package-lock.json**: Файл зависимостей npm.
-- **package.json**: Файл настроек npm.
-- **public/**: Каталог с публичными файлами фронтенда.
-- **src/**: Каталог с исходным кодом фронтенда.
+- **.npmrc**: npm settings file.
+- **Dockerfile-dev**: Dockerfile for frontend development.
+- **Dockerfile-prod**: Dockerfile for frontend production.
+- **jsconfig.json**: JavaScript settings file.
+- **nginx/**: Directory with Nginx configuration.
+- **package-lock.json**: npm dependency file.
+- **package.json**: npm settings file.
+- **public/**: Directory with public frontend files.
+- **src/**: Directory with frontend source code.
 
-## Установка и использование
+## Installation and Usage
 
-1. **Необходимо создать файлы .env**
+1. **Create .env Files**
 
 - `./finance_track_backend/.env.dev`
 - `./finance_track_frontend/.env.development`
@@ -39,7 +38,7 @@ FinanceTrack представляет собой проект для учета 
 - `.env.dev.db`
 - `.env.prod.db`
 
-#### Пример структуры .env файлов
+#### Example .env Structure
 
 ----- finance_track_backend/.env.dev -----
 ```
@@ -90,28 +89,27 @@ POSTGRES_DB=FinanceTrackProd
 
 ```REACT_APP_BASE_URL=localhost```
 
-2. **Установка зависимостей (Для запуска без Docker)**:
-    - Перейдите в каталог `finance_track_backend` и выполните команду `pip install -r requirements.txt` для установки необходимых зависимостей Python. Обратите внимание, что для работы приложения необходима база данных.
-    - Перейдите в каталог `finance_track_frontend` и выполните команду `npm install` для установки необходимых зависимостей npm.
+2. **Install Dependencies (For Non-Docker Setup)**:
+    - Navigate to the `finance_track_backend` directory and run `pip install -r requirements.txt` to install necessary Python dependencies. Note that a database is required for the application to function.
+    - Navigate to the `finance_track_frontend` directory and run `npm install` to install necessary npm dependencies.
 
-3. **Запуск проекта**:
-    - Для разработки: Запустите ```docker-compose -f docker-compose-dev.yml up --build```.
-    - Для продакшна: Запустите ```docker-compose -f docker-compose-prod.yml up --build```.
+3. **Run the Project**:
+    - For development: Run ```docker-compose -f docker-compose-dev.yml up --build```.
+    - For production: Run ```docker-compose -f docker-compose-prod.yml up --build```.
 
-4. **Доступ к приложению**:
-    - **Бэкенд для разработки**: http://localhost:8000/
-    - **Фронтенд для разработки**: http://localhost:3000/
-    - **Бэкенд для продакшна**: http://localhost/admin/ http://localhost/swagger/ 
-    - **Фронтенд для продакшна**: http://localhost/
+4. **Accessing the Application**:
+    - **Development Backend**: http://localhost:8000/
+    - **Development Frontend**: http://localhost:3000/
+    - **Production Backend**: http://localhost/admin/ http://localhost/swagger/ 
+    - **Production Frontend**: http://localhost/
 
-## Использованный фреймворк/шаблон
-Фронтенд был разработан с использованием [argon-dashboard-react](https://github.com/creativetimofficial/argon-dashboard-react).
-
+## Framework/Template Used
+The frontend was developed using [argon-dashboard-react](https://github.com/creativetimofficial/argon-dashboard-react).
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE). Feel free to use, modify, and distribute it according to the terms of the license.
 
-## Авторы
+## Authors
 
-Автор этого проекта - [0xN1ck](https://github.com/0xN1ck).
+The author of this project is [0xN1ck](https://github.com/0xN1ck).
