@@ -34,6 +34,13 @@ const Login = () => {
   const handleLogin = () => {
     dispatch(login(email, password))
   };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <>
       {error && <p>{error.message}</p>}
@@ -57,6 +64,7 @@ const Login = () => {
                     autoComplete="new-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={handleKeyDown}
                   />
                 </InputGroup>
               </FormGroup>
@@ -73,6 +81,7 @@ const Login = () => {
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={handleKeyDown}
                   />
                 </InputGroup>
               </FormGroup>

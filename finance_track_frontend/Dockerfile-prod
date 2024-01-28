@@ -1,24 +1,10 @@
-# FROM node:18-alpine
-
-# WORKDIR /FinanceTrack/finance_track_frontend/
-
-# COPY ./ ./
-
-# RUN npm install
-# #
-# #COPY ./finance_track_frontend/ ./
-# #
-# RUN npm run build
-
-# # COPY ./ ./FinanceTrack/finance_track_frontend/
-
 ###########
 # BUILDER #
 ###########
 FROM node:18-alpine as builder
 
 COPY package*.json ./
-RUN npm install --force
+RUN npm install --legacy-peer-deps
 RUN mkdir /finance_track_frontend
 RUN mv ./node_modules ./finance_track_frontend
 
