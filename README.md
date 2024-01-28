@@ -87,7 +87,7 @@ POSTGRES_DB=FinanceTrackProd
 
 ```REACT_APP_BASE_URL=localhost:8000```
 
------ finance_track_frontend/.env.development -----
+----- finance_track_frontend/.env.production -----
 
 ```REACT_APP_BASE_URL=localhost```
 
