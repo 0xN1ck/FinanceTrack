@@ -33,7 +33,6 @@ services:
       - 80:80
     environment:
       - NODE_ENV=production
-      - REACT_APP_BASE_URL=localhost
     depends_on:
       - "backend-prod"
 
