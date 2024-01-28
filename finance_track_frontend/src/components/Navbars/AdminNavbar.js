@@ -4,12 +4,6 @@ import {
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Form,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Input,
-  InputGroup,
   Navbar,
   Nav,
   Container,
@@ -18,9 +12,6 @@ import {
 import { useDispatch } from "react-redux";
 import { logout, isAdmin } from "actions/authActions";
 import React from "react";
-
-import adminImage from "../../assets/img/theme/admin.png";
-import userImage from "../../assets/img/theme/user.png";
 
 const AdminNavbar = (props) => {
 
@@ -40,7 +31,7 @@ const AdminNavbar = (props) => {
     dispatch(logout())
     setTimeout(() => {
       navigate('/auth/login');
-    }, 100); 
+    }, 500); 
   }
     return (
       <>

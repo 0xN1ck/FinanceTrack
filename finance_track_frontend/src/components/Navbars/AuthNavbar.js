@@ -4,8 +4,6 @@ import {
   UncontrolledCollapse,
   NavbarBrand,
   Navbar,
-  NavItem,
-  NavLink,
   Nav,
   Container,
   Row,
