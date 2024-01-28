@@ -1,4 +1,6 @@
-<img src="finance_track_frontend/src/assets/img/brand/finance-track.png" alt="FinanceTrack Logo" style="display: block; margin: 0 auto;">
+<p align="center">
+  <img src="finance_track_frontend/src/assets/img/brand/finance-track.png" alt="FinanceTrack Logo">
+</p>
 
 FinanceTrack is a project for managing employee data for administrators and for users to view their work.
 
