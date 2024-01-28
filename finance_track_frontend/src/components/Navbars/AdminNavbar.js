@@ -19,6 +19,9 @@ import { useDispatch } from "react-redux";
 import { logout, isAdmin } from "actions/authActions";
 import React from "react";
 
+import adminImage from "../../assets/img/theme/admin.png";
+import userImage from "../../assets/img/theme/user.png";
+
 const AdminNavbar = (props) => {
 
   const dispatch = useDispatch();

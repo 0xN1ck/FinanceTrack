@@ -1,0 +1,7 @@
+FROM node:18-alpine
+
+WORKDIR /FinanceTrack/finance_track_frontend/
+
+COPY ./ ./
+
+RUN npm install

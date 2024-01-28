@@ -1,47 +1,62 @@
 version: '3.7'
 
 services:
-  backend:
-    build: ./finance_track_backend
+  backend-dev:
+    build:
+      context: ./finance_track_backend
+      dockerfile: Dockerfile-dev
+    container_name: "finance-track-backend-dev"
     command: >
-      sh entrypoint.sh
       python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./finance_track_backend:/FinanceTrack/finance_track_backend/
+    networks:
+      - dev
     ports:
       - 8000:8000
     env_file:
-      - .env.dev
+      - ./finance_track_backend/.env.dev
     environment:
       - WATCHPACK_POLLING=true
     stdin_open: true
     depends_on:
-      - db
-  frontend:
-    build: ./finance_track_frontend
+      - db-dev
+  frontend-dev:
+    build:
+      context: ./finance_track_frontend
+      dockerfile: Dockerfile-dev
+    container_name: "finance-track-frontend-dev"
     command: >
       sh -c "npm run start --poll"
     volumes:
       - ./finance_track_frontend/src/:/FinanceTrack/finance_track_frontend/src/
       - ./finance_track_frontend/public/:/FinanceTrack/finance_track_frontend/public/
+    env_file:
+      - ./finance_track_frontend/.env.development
+    networks:
+      - dev
     ports:
       - 3000:3000
     environment:
       - WATCHPACK_POLLING=true
     stdin_open: true
     depends_on:
-      - backend
-      - db
-  db:
+      - backend-dev
+      - db-dev
+  db-dev:
     image: postgres:12.0-alpine
+    container_name: "finance-track-db-dev"
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=0xN1ck
-      - POSTGRES_PASSWORD=FinTrackPasOne99Seven
-      - POSTGRES_DB=FinanceTrackDev
+      - postgres_data_dev:/var/lib/postgresql/data/
+    networks:
+      - dev
+    env_file:
+      - .env.dev.db
     ports:
       - 5432:5432
     restart: unless-stopped
 volumes:
-  postgres_data:
+  postgres_data_dev:
+
+networks:
+  dev:

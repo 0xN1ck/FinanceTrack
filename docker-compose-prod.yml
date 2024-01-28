@@ -1,64 +1,55 @@
-version: '3.3'
+version: '3.7'
 
 services:
-  backend:
+  backend-prod:
     build:
       context: ./finance_track_backend
-      dockerfile: ./Dockerfile-prod
-    command: >
-      sh entrypoint.sh
-      gunicorn FinanceTrack.wsgi:application -b 0.0.0.0:8000
+      dockerfile: Dockerfile-prod
+    container_name: "finance-track-backend-prod"
+    command: gunicorn FinanceTrack.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./finance_track_backend:/FinanceTrack/finance_track_backend/
-    ports:
-      - 8000:8000
+      - static_volume:/home/app/finance_track_backend/api/static
+    networks:
+      - prod
+    expose:
+      - 8000
     env_file:
       - ./finance_track_backend/.env.prod
-    stdin_open: true
     depends_on:
-      - db
-  frontend:
+      - db-prod
+
+  frontend-prod:
     build:
       context: ./finance_track_frontend
-      dockerfile: ./Dockerfile-prod
-    command: >
-      sh -c "npm run start --poll"
+      dockerfile: Dockerfile-prod
+    container_name: "finance-track-frontend-prod"
     volumes:
-      - ./finance_track_frontend/src/:/FinanceTrack/finance_track_frontend/src/
-      - ./finance_track_frontend/public/:/FinanceTrack/finance_track_frontend/public/
-      - ./finance_track_frontend/build/:/FinanceTrack/finance_track_frontend/build/
-#    expose:
-#      - 3000
-#    ports:
-#      - 3000:3000
-    environment:
-      - WATCHPACK_POLLING=true
-    stdin_open: true
-    depends_on:
-      - backend
-      - db
-  nginx:
-    build:
-      context: ./nginx
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-      - frontend
-  db:
-    image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - static_volume:/home/app/finance_track_backend/api/static
     env_file:
-      - ./finance_track_backend/.env.prod
-#    environment:
-#      - POSTGRES_USER=0xN1ck
-#      - POSTGRES_PASSWORD=FinTrackPasOne99Seven
-#      - POSTGRES_DB=FinanceTrackProd
+      - ./finance_track_frontend/.env.production
+    networks:
+      - prod
     ports:
-      - 5432:5432
-    restart: unless-stopped
+      - 80:80
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_BASE_URL=localhost
+    depends_on:
+      - "backend-prod"
+
+  db-prod:
+    image: postgres:13.2-alpine
+    container_name: "finance-track-db-prod"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - prod
+    env_file:
+      - ./.env.prod.db
+
 volumes:
-  postgres_data:
+  postgres_data_prod:
+  static_volume:
+
+networks:
+  prod:

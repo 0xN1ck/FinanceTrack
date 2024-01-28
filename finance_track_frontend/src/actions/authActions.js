@@ -2,7 +2,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
 
-const API_BASE_URL = "http://localhost:8000/api"; // Базовый URL вашего API
+const API_BASE_URL = `http://${process.env.REACT_APP_BASE_URL}/api`; // Базовый URL вашего API
 
 export let api = axios.create({
   baseURL: API_BASE_URL,
@@ -14,7 +14,6 @@ export let api = axios.create({
 export const login = (username, password) => {
   return (dispatch) => {
     // Выполняем запрос на сервер для входа пользователя
-    // axios.post('http://192.168.1.75:8000/api/dj-rest-auth/login/', { email, password })
     api.post('/login/', {username, password})
       .then((response) => {
         // Если успешно, сохраняем токен в локальном хранилище

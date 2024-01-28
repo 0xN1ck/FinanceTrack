@@ -14,5 +14,6 @@ COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 # copy project
 COPY . .
+RUN chmod +x ./entrypoint-dev.sh
 # run entrypoint.sh
-ENTRYPOINT ["/FinanceTrack/finance_track_backend/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/FinanceTrack/finance_track_backend/entrypoint-dev.sh"]

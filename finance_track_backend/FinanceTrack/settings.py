@@ -7,12 +7,12 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv('./.env.prod')
+# load_dotenv('./.env.prod')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-print(os.environ.keys())
+# print(os.environ.keys())
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -51,39 +51,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://192.168.1.150',
-    'http://192.168.1.150:3000',
-    'http://192.168.1.150:8000',
-    'http://financetrack-prod-frontend-1',
-    'http://financetrack-prod-frontend-1:3000',
-]
+CORS_ORIGIN_WHITELIST = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://192.168.1.150',
-    'http://192.168.1.150:3000',
-    'http://192.168.1.150:8000',
-    'http://financetrack-prod-frontend-1',
-    'http://financetrack-prod-frontend-1:3000',
-]
+CORS_ALLOWED_ORIGINS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost',
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://192.168.1.150',
-    'http://192.168.1.150:3000',
-    'http://192.168.1.150:8000',
-    'http://financetrack-prod-frontend-1',
-    'http://financetrack-prod-frontend-1:3000',
-]
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 ROOT_URLCONF = 'FinanceTrack.urls'
 
@@ -152,9 +124,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_ROOT = BASE_DIR / 'static'
-
-STATIC_URL = 'static/'
+STATIC_URL = '/api/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'api/static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
