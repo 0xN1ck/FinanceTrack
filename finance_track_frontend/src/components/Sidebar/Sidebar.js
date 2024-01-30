@@ -23,13 +23,8 @@ import {
 import { useDispatch } from "react-redux";
 import { logout, isAdmin } from "actions/authActions";
 
-var ps;
-
 const Sidebar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState();
-  const activeRoute = (routeName) => {
-    return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
-  };
   const toggleCollapse = () => {
     setCollapseOpen((data) => !data);
   };
@@ -40,27 +35,30 @@ const Sidebar = (props) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/home") {
         if (prop.path === "/accounting" && !isAdmin()) {
-        return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
-      }
+          return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
+        }
         if (prop.path === "/extracts" && !isAdmin()) {
-        return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
+          return null; // Если пользователь не является администратором, не отображайте пункт меню для компонента Accounting
+        }
+        return (
+          <NavItem key={key}>
+            <NavLink
+              to={prop.layout + prop.path}
+              tag={NavLinkRRD}
+              onClick={closeCollapse}
+            >
+              <i className={prop.icon} />
+              {prop.name}
+            </NavLink>
+          </NavItem>
+        );
       }
-      return (
-        <NavItem key={key}>
-          <NavLink
-            to={prop.layout + prop.path}
-            tag={NavLinkRRD}
-            onClick={closeCollapse}
-          >
-            <i className={prop.icon} />
-            {prop.name}
-          </NavLink>
-        </NavItem>
-      );}
+      return null; // Добавленный возврат значения для случаев, когда prop.layout !== "/home"
     });
   };
+  
 
-  const { bgColor, routes, logo } = props;
+  const { routes, logo } = props;
   let navbarBrandProps;
   if (logo && logo.innerLink) {
     navbarBrandProps = {

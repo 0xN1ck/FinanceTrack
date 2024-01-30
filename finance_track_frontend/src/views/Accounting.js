@@ -30,9 +30,10 @@ import {
   getTotalPagesForDeductions,
 } from "actions/accountingActions";
 
+import {api} from "../actions/authActions";
+
 const Accounting = () => {
   const [workers, setWorkers] = useState([]);
-  const [isTableVisible, setIsTableVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState([]);
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -43,13 +44,39 @@ const Accounting = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const [isTagFormOpen, setIsTagFormOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState(null);
+
+  const [tags, setTags] = useState([]);
+  const [assignee, setAssignee] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const tagsResponse = await api.get('/tags/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setTags(tagsResponse.data);
+
+        const assigneeResponse = await api.get('/assignee/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setAssignee(assigneeResponse.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   const dataWithWeekNumbers = data.map(item => ({
     ...item,
     weekNumber: moment(item.date).isoWeek(), // используем moment для определения номера недели
   }));
-
 
   useEffect(() => {
     getWorkers()
@@ -60,10 +87,6 @@ const Accounting = () => {
         console.log(error);
       });
   }, []);
-
-  useEffect(() => {
-    setIsTableVisible(data && data.length > 0);
-  }, [data]);
 
   const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
@@ -202,13 +225,6 @@ const Accounting = () => {
     setIsTagFormOpen(true);
   };
 
-  const handleTagFormSubmit = (formData) => {
-    // Ваша логика для отправки запроса на изменение или создание тега
-    // Обновление данных и закрытие формы
-
-    setIsTagFormOpen(false);
-  };
-
 
   return (
     <>
@@ -240,7 +256,7 @@ const Accounting = () => {
                   <Col xs="6" md="6" className="d-flex justify-content-end align-items-center">
                     <Button
                       color="info"
-                      onClick={() => handleEditTag(selectedTag)}
+                      onClick={() => handleEditTag()}
                       size={window.innerWidth <= 576 ? "sm" : null}
                       className="mr-2 mr-md-0" // Margin on mobile
                       style={{whiteSpace: 'nowrap'}}
@@ -366,24 +382,15 @@ const Accounting = () => {
                             item={{
                               id: null,
                               user: workers.filter((user) => user.username === selectedOption[0])[0],
-                              tag: {
-                                id: 3,
-                                name: "bm",
-                              },
+                              tag: tags[0],
                               cost_of_consumables: null,
                               amount_of_deposits: null,
                               commission_for_deposits: null,
-                              assignee: {
-                                id: 1,
-                                user: {
-                                  id: 1,
-                                  username: "maxim",
-                                },
-                              },
+                              assignee: assignee[0],
                               date: new Date().toISOString(),
                               user_id: workers.filter((user) => user.username === selectedOption[0])[0].id,
-                              assignee_id: 1,
-                              tag_id: 3,
+                              assignee_id: assignee[0].id,
+                              tag_id: tags[0].id,
                             }}
                             onClose={() => setIsAddFormOpen(false)}
                             onSubmit={handleAddFormSubmit}
