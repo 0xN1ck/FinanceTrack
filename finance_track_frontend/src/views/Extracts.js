@@ -32,7 +32,7 @@ import {
   updateExtracts
 } from "../actions/extractActions";
 import {getDataOfUser} from "../actions/authActions";
-import {getStatsForUser, getStatsForAllUsers} from "../actions/getStatsActions";
+// import {getStatsForUser, getStatsForAllUsers} from "../actions/getStatsActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
@@ -138,6 +138,10 @@ const Extracts = () => {
 
   const handleAddFormSubmit = (formData) => {
     createExtracts(formData)
+      .then(response => {
+        setSelectedItem(response);
+        setIsFormOpen(true);
+      })
       .then(response => {
         getExtracts(currentPage + 1, pageSize)
           .then(response => {
