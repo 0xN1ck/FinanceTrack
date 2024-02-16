@@ -1,8 +1,8 @@
 import React from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import {Modal, ModalHeader, ModalBody, ModalFooter, Button} from "reactstrap";
 import moment from "moment/moment";
 
-const DetailsReportForm = ({ isOpen, toggle, modalData }) => {
+const DetailsReportForm = ({isOpen, toggle, modalData}) => {
   const modalStyles = {
     modalItem: {
       display: "flex",
@@ -52,10 +52,6 @@ const DetailsReportForm = ({ isOpen, toggle, modalData }) => {
               <span style={modalStyles.modalValue}>{modalData.debt}</span>
             </div>
             <div style={modalStyles.modalItem}>
-              <span style={modalStyles.modalLabel}>Выплата:</span>
-              <span style={modalStyles.modalValue}>{modalData.payment}</span>
-            </div>
-            <div style={modalStyles.modalItem}>
               <span style={modalStyles.modalLabel}>Сумма расходников:</span>
               <span style={modalStyles.modalValue}>{modalData.amount_of_consumables}</span>
             </div>
@@ -64,8 +60,16 @@ const DetailsReportForm = ({ isOpen, toggle, modalData }) => {
               <span style={modalStyles.modalValue}>{modalData.amount_commission_for_deposits}</span>
             </div>
             <div style={modalStyles.modalItem}>
-              <span style={modalStyles.modalLabel}>Итого:</span>
-              <span style={modalStyles.modalValue}>{modalData.total}</span>
+              <span style={{...modalStyles.modalLabel, color: modalData.total >= 0 ? '#78b33f' : '#ff3e3d', fontSize: '1.3em'}}>Итого:</span>
+              <span style={{...modalStyles.modalValue, fontSize: '1.3em'}}>{modalData.total}</span>
+            </div>
+            <div style={modalStyles.modalItem}>
+              <span style={{
+                ...modalStyles.modalLabel,
+                color: '#0092d2',
+                fontSize: '1.3em'
+              }}>Выплата:</span>
+              <span style={{...modalStyles.modalValue, fontSize: '1.3em'}}>{modalData.payment}</span>
             </div>
           </>
         )}
