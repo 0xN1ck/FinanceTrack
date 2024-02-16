@@ -84,19 +84,6 @@ const Login = () => {
                   />
                 </InputGroup>
               </FormGroup>
-              {/* <div className="custom-control custom-control-alternative custom-checkbox">
-                <input
-                  className="custom-control-input"
-                  id=" customCheckLogin"
-                  type="checkbox"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor=" customCheckLogin"
-                >
-                  <span className="text-muted">Запомни меня</span>
-                </label>
-              </div> */}
               <div className="text-center">
                 <Button className="my-4" color="primary" onClick={handleLogin}>
                   Войти
@@ -105,17 +92,6 @@ const Login = () => {
             </Form>
           </CardBody>
         </Card>
-        {/* <Row className="mt-3">
-          <Col xs="6">
-            <a
-              className="text-light"
-              href="#pablo"
-              onClick={(e) => e.preventDefault()}
-            >
-              <small>Забыли пароль?</small>
-            </a>
-          </Col>
-        </Row> */}
       </Col>
     </>
   );

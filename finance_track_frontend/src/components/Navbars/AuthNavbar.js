@@ -44,28 +44,6 @@ const AdminNavbar = () => {
               </Row>
             </div>
             <Nav className="ml-auto" navbar>
-              {/* <NavItem>
-                <NavLink className="nav-link-icon" to="/home" tag={Link}>
-                  <i className="ni ni-planet" />
-                  <span className="nav-link-inner--text">Главная страница</span>
-                </NavLink>
-              </NavItem> */}
-              {/* <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
-                  <i className="ni ni-key-25" />
-                  <span className="nav-link-inner--text">Авторизация</span>
-                </NavLink>
-              </NavItem> */}
-              {/* <NavItem>
-                <NavLink
-                  className="nav-link-icon"
-                  to="/home/user-profile"
-                  tag={Link}
-                >
-                  <i className="ni ni-single-02" />
-                  <span className="nav-link-inner--text">Профиль</span>
-                </NavLink>
-              </NavItem> */}
             </Nav>
           </UncontrolledCollapse>
         </Container>

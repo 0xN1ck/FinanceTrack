@@ -10,7 +10,6 @@ const Login = () => {
               <div className="copyright text-center text-xl-left text-muted">
                 © {new Date().getFullYear()}{" "}
                   0xN1ck
-                {/*</a>*/}
               </div>
             </Col>
           </Row>

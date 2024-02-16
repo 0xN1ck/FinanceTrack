@@ -302,112 +302,112 @@ const Accounting = () => {
 
                       return (
                         <React.Fragment key={item.id}>
-                        {isWeekChange && (
-                          <tr key={`week-separator-${item.id}`}>
-                            <td colSpan="9" className="text-center text-dark font-weight-bold">
-                              {item.weekNumber} неделя {moment(item.date).format("YYYY")} года
+                          {isWeekChange && (
+                            <tr key={`week-separator-${item.id}`}>
+                              <td colSpan="9" className="text-center text-dark font-weight-bold">
+                                {item.weekNumber} неделя {moment(item.date).format("YYYY")} года
+                              </td>
+                            </tr>
+                          )}
+                          <tr key={item.id}>
+                            <td>{rowNumber}</td>
+                            <td>{item.user.username}</td>
+                            <td>{item.tag.name}</td>
+                            <td>{item.cost_of_consumables}</td>
+                            <td>{item.amount_of_deposits}</td>
+                            <td>{item.commission_for_deposits}</td>
+                            <td>{item.assignee.user.username}</td>
+                            <td>
+                              {moment(item.date)
+                                .locale("ru")
+                                .format("D MMMM YYYY [г.], HH:mm:ss")}
+                            </td>
+                            <td className="text-right">
+                              <UncontrolledDropdown>
+                                <DropdownToggle
+                                  className="btn-icon-only text-light"
+                                  role="button"
+                                  size="sm"
+                                  color=""
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  <i className="fas fa-ellipsis-v"/>
+                                </DropdownToggle>
+                                <DropdownMenu className="dropdown-menu-arrow" right>
+                                  <DropdownItem onClick={() => handleEdit(item)}>
+                                    Изменить
+                                  </DropdownItem>
+                                  <DropdownItem onClick={() => handleDelete(item.id)}>
+                                    Удалить
+                                  </DropdownItem>
+                                </DropdownMenu>
+                              </UncontrolledDropdown>
                             </td>
                           </tr>
-                        )}
-                        <tr key={item.id}>
-                          <td>{rowNumber}</td>
-                          <td>{item.user.username}</td>
-                          <td>{item.tag.name}</td>
-                          <td>{item.cost_of_consumables}</td>
-                          <td>{item.amount_of_deposits}</td>
-                          <td>{item.commission_for_deposits}</td>
-                          <td>{item.assignee.user.username}</td>
-                          <td>
-                            {moment(item.date)
-                              .locale("ru")
-                              .format("D MMMM YYYY [г.], HH:mm:ss")}
-                          </td>
-                          <td className="text-right">
-                            <UncontrolledDropdown>
-                              <DropdownToggle
-                                className="btn-icon-only text-light"
-                                role="button"
-                                size="sm"
-                                color=""
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                <i className="fas fa-ellipsis-v"/>
-                              </DropdownToggle>
-                              <DropdownMenu className="dropdown-menu-arrow" right>
-                                <DropdownItem onClick={() => handleEdit(item)}>
-                                  Изменить
-                                </DropdownItem>
-                                <DropdownItem onClick={() => handleDelete(item.id)}>
-                                  Удалить
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </td>
-                        </tr>
                         </React.Fragment>
-                        );
-                        })
-                        ) : (
-                        <tr>
-                          <td colSpan="9">Нет данных для отображения</td>
-                        </tr>
-                        )}
-                        </tbody>
-                    </Table>
+                      );
+                    })
+                ) : (
+                  <tr>
+                    <td colSpan="9">Нет данных для отображения</td>
+                  </tr>
+                )}
+                </tbody>
+              </Table>
 
-                      {/* Pagination */
-                      }
-                      <PaginationForTable
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                      />
-                    </Card>
-                    </Col>
-                    </Row>
-                    </Container>
-                      {
-                        isFormOpen && (
-                          <EditForm
-                            item={selectedItem}
-                            onClose={handleFormClose}
-                            onSubmit={handleFormSubmit}
-                            isCreateMode={false}
-                          />
-                        )
-                      }
-                      {
-                        isAddFormOpen && (
-                          <EditForm
-                            item={{
-                              id: null,
-                              user: workers.filter((user) => user.username === selectedOption[0])[0],
-                              tag: tags[0],
-                              cost_of_consumables: null,
-                              amount_of_deposits: null,
-                              commission_for_deposits: null,
-                              assignee: assignee[0],
-                              date: new Date().toISOString(),
-                              user_id: workers.filter((user) => user.username === selectedOption[0])[0].id,
-                              assignee_id: assignee[0].id,
-                              tag_id: tags[0].id,
-                            }}
-                            onClose={() => setIsAddFormOpen(false)}
-                            onSubmit={handleAddFormSubmit}
-                            isCreateMode={true}
-                          />
-                        )
-                      }
-                      {
-                        isTagFormOpen && (
-                          <CreateOrUpdateTagForm
-                            onClose={() => setIsTagFormOpen(false)}
-                          />
-                        )
-                      }
-                    </>
-                    )
-                      ;
-                    };
+              {/* Pagination */
+              }
+              <PaginationForTable
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      {
+        isFormOpen && (
+          <EditForm
+            item={selectedItem}
+            onClose={handleFormClose}
+            onSubmit={handleFormSubmit}
+            isCreateMode={false}
+          />
+        )
+      }
+      {
+        isAddFormOpen && (
+          <EditForm
+            item={{
+              id: null,
+              user: workers.filter((user) => user.username === selectedOption[0])[0],
+              tag: tags[0],
+              cost_of_consumables: null,
+              amount_of_deposits: null,
+              commission_for_deposits: null,
+              assignee: assignee[0],
+              date: new Date().toISOString(),
+              user_id: workers.filter((user) => user.username === selectedOption[0])[0].id,
+              assignee_id: assignee[0].id,
+              tag_id: tags[0].id,
+            }}
+            onClose={() => setIsAddFormOpen(false)}
+            onSubmit={handleAddFormSubmit}
+            isCreateMode={true}
+          />
+        )
+      }
+      {
+        isTagFormOpen && (
+          <CreateOrUpdateTagForm
+            onClose={() => setIsTagFormOpen(false)}
+          />
+        )
+      }
+    </>
+  )
+    ;
+};
 
-                  export default Accounting;
+export default Accounting;

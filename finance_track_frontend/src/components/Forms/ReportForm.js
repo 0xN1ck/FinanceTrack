@@ -95,11 +95,6 @@ const ReportForm = ({item, isCreateMode, onClose, onSubmit}) => {
     onSubmit({...formData});
   };
 
-  const handleCreateReport = () => {
-    // Логика создания отчета
-    // toggleModal(); // Закрытие модального окна после создания отчета
-  };
-
   let size_head = 8
   let size_body = 4
   if (!isCreateMode) {
