@@ -158,7 +158,7 @@ class ExtractsForWorkerList(generics.ListAPIView):
 
     def get_queryset(self):
         worker_id = self.kwargs['user']
-        return Extracts.objects.filter(user_id=worker_id)
+        return Extracts.objects.filter(user_id=worker_id).order_by('-id')
 
 
 class ExtractsViewSet(viewsets.GenericViewSet):
