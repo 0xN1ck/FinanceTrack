@@ -121,7 +121,7 @@ const Accounting = () => {
 
   const handleDelete = (itemId) => {
     deleteDeduction(itemId)
-      .then((response) => {
+      .then(() => {
         const workerId =
           selectedOption && selectedOption.length > 0
             ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
@@ -130,9 +130,21 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
+        getTotalPagesForDeductions(workerId)
           .then((response) => {
-            setData(response.results);
+            let currentPageUpdate = currentPage
+            if (response.total_pages < totalPages && currentPage + 1 === totalPages) {
+              setCurrentPage(currentPage - 1);
+              currentPageUpdate = currentPage - 1
+            }
+            setTotalPages(response.total_pages);
+            getDeductionsByWorkerId(workerId, currentPageUpdate + 1, pageSize)
+              .then((response) => {
+                setData(response.results);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           })
           .catch((error) => {
             console.log(error);
@@ -178,7 +190,7 @@ const Accounting = () => {
 
   const handleAddFormSubmit = (formData) => {
     createDeduction(formData)
-      .then((response) => {
+      .then(() => {
         const workerId =
           selectedOption && selectedOption.length > 0
             ? workers.filter((user) => user.username === selectedOption[0])[0]?.id
@@ -187,13 +199,22 @@ const Accounting = () => {
           console.log("Работник не найден");
           return;
         }
-        getDeductionsByWorkerId(workerId, currentPage + 1, pageSize)
+        getTotalPagesForDeductions(workerId)
           .then((response) => {
-            setData(response.results);
+            let currentPageUpdate = currentPage
+            if (response.total_pages > totalPages && currentPage + 1 === totalPages) {
+              setCurrentPage(currentPage + 1);
+              currentPageUpdate = currentPage + 1
+            }
+            setTotalPages(response.total_pages);
+            getDeductionsByWorkerId(workerId, currentPageUpdate + 1, pageSize)
+              .then((response) => {
+                setData(response.results);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           })
-          .catch((error) => {
-            console.log(error);
-          });
       })
       .catch((error) => {
         console.log(error);

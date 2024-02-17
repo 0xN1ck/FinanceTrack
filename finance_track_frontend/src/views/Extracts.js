@@ -55,32 +55,11 @@ const Extracts = () => {
     getWorkers()
       .then((response) => {
         setWorkers(response);
-        console.log(response);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-
-  // useEffect(() => {
-  //   if (isAdmin() && currentWorker !== null) {
-  //     getTotalPagesForExtracts()
-  //       .then((response) => {
-  //         setTotalPages(response.total_pages);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //     getExtracts(1, pageSize)
-  //       .then(response => {
-  //         setData(response.results);
-  //         setUpdateHeader(prevState => !prevState);
-  //       })
-  //       .catch(error => {
-  //         console.log(error);
-  //       });
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (!isAdmin()) {
