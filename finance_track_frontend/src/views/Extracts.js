@@ -19,8 +19,6 @@ import DetailsReportForm from "components/Forms/DetailsReportForm";
 
 import {isAdmin} from "../actions/authActions";
 import {
-  getExtracts,
-  getTotalPagesForExtracts,
   getTotalPagesForExtractsUser,
   getExtractsByWorkerId,
   deleteExtracts,
@@ -28,7 +26,6 @@ import {
   updateExtracts
 } from "../actions/extractActions";
 import {getDataOfUser} from "../actions/authActions";
-// import {getStatsForUser, getStatsForAllUsers} from "../actions/getStatsActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
