@@ -32,9 +32,13 @@ import {getDataOfUser} from "../actions/authActions";
 
 import ReportForm from "components/Forms/ReportForm";
 import moment from "moment/moment";
+import {getWorkers} from "../actions/accountingActions";
+import {Typeahead} from "react-bootstrap-typeahead";
 
 
 const Extracts = () => {
+  const [workers, setWorkers] = useState([]);
+  const [currentWorker, setCurrentWorker] = useState(null);
   const [data, setData] = useState([]);
   const [dataForUser, setDataForUser] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -48,24 +52,35 @@ const Extracts = () => {
   const [updateHeader, setUpdateHeader] = useState(false);
 
   useEffect(() => {
-    if (isAdmin()) {
-      getTotalPagesForExtracts()
-        .then((response) => {
-          setTotalPages(response.total_pages);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      getExtracts(1, pageSize)
-        .then(response => {
-          setData(response.results);
-          setUpdateHeader(prevState => !prevState);
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
+    getWorkers()
+      .then((response) => {
+        setWorkers(response);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
+
+  // useEffect(() => {
+  //   if (isAdmin() && currentWorker !== null) {
+  //     getTotalPagesForExtracts()
+  //       .then((response) => {
+  //         setTotalPages(response.total_pages);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //     getExtracts(1, pageSize)
+  //       .then(response => {
+  //         setData(response.results);
+  //         setUpdateHeader(prevState => !prevState);
+  //       })
+  //       .catch(error => {
+  //         console.log(error);
+  //       });
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!isAdmin()) {
@@ -97,19 +112,30 @@ const Extracts = () => {
   const handleDelete = (itemId) => {
     deleteExtracts(itemId)
       .then(() => {
-        getExtracts(currentPage + 1, pageSize)
-          .then(response => {
-            setData(response.results);
-            setUpdateHeader(prevState => !prevState);
+        getTotalPagesForExtractsUser(currentWorker.id)
+          .then((response) => {
+            let currentPageUpdate = currentPage
+            if (response.total_pages < totalPages && currentPage + 1 === totalPages) {
+              setCurrentPage(currentPage - 1);
+              currentPageUpdate = currentPage - 1
+            }
+            setTotalPages(response.total_pages);
+            getExtractsByWorkerId(currentWorker.id, currentPageUpdate + 1, pageSize)
+              .then(response => {
+                setData(response.results);
+                setUpdateHeader(prevState => !prevState);
+              })
+              .catch(error => {
+                console.log(error);
+              });
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
       })
       .catch(error => {
         console.log(error);
       });
-
   };
 
   const handleFormClose = () => {
@@ -120,7 +146,7 @@ const Extracts = () => {
   const handleFormSubmit = (formData) => {
     updateExtracts(formData.id, formData)
       .then(response => {
-        getExtracts(currentPage + 1, pageSize)
+        getExtractsByWorkerId(currentWorker.id, currentPage + 1, pageSize)
           .then(response => {
             setData(response.results);
             setUpdateHeader(prevState => !prevState);
@@ -146,14 +172,23 @@ const Extracts = () => {
         setIsFormOpen(true);
       })
       .then(response => {
-        getExtracts(currentPage + 1, pageSize)
-          .then(response => {
-            setData(response.results);
-            setUpdateHeader(prevState => !prevState);
+        getTotalPagesForExtractsUser(currentWorker.id)
+          .then((response) => {
+            let currentPageUpdate = currentPage
+            if (response.total_pages > totalPages && currentPage + 1 === totalPages) {
+              setCurrentPage(currentPage + 1);
+              currentPageUpdate = currentPage + 1
+            }
+            setTotalPages(response.total_pages);
+            getExtractsByWorkerId(currentWorker.id, currentPageUpdate + 1, pageSize)
+              .then(response => {
+                setData(response.results);
+                setUpdateHeader(prevState => !prevState);
+              })
+              .catch(error => {
+                console.log(error);
+              });
           })
-          .catch(error => {
-            console.log(error);
-          });
       })
       .catch(error => {
         console.log(error);
@@ -163,7 +198,7 @@ const Extracts = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    getExtracts(page + 1, pageSize)
+    getExtractsByWorkerId(currentWorker.id, page + 1, pageSize)
       .then((response) => {
         setData(response.results);
         setUpdateHeader(prevState => !prevState);
@@ -195,9 +230,45 @@ const Extracts = () => {
     setModalOpen(false);
   };
 
+  const handleChangeCurrentWorker = (currentWorker) => {
+    const worker = workers.find(user => user.username === currentWorker[0])
+    if (!worker) {
+      console.log("Работник не найден");
+      return;
+    }
+    setCurrentWorker(worker)
+    getTotalPagesForExtractsUser(worker.id)
+      .then((response) => {
+        setTotalPages(response.total_pages);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    getExtractsByWorkerId(worker.id, 1, pageSize)
+      .then(response => {
+        setData(response.results);
+        setUpdateHeader(prevState => !prevState);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   return (
     <>
       <Header update={updateHeader}/>
+      <div style={{marginTop: "130px"}}>
+        <Container className="mt--7 col-lg-6">
+          <Typeahead
+            clearButton
+            id="selections-example"
+            labelKey="name"
+            options={workers.map((item) => item.username)}
+            onChange={handleChangeCurrentWorker}
+            placeholder="Выберите сотрудника..."
+          />
+        </Container>
+      </div>
       {isAdmin() ? (
         /* Table */
         <Container className="mt-3" fluid>

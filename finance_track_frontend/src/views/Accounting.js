@@ -104,7 +104,6 @@ const Accounting = () => {
       })
       .catch((error) => {
         console.log(error);
-        console.log(error);
       })
     getDeductionsByWorkerId(workerId, 1, pageSize)
       .then((response) => {
