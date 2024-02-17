@@ -236,18 +236,21 @@ const Extracts = () => {
   return (
     <>
       <Header update={updateHeader}/>
-      <div style={{marginTop: "130px"}}>
-        <Container className="mt--7 col-lg-6">
-          <Typeahead
-            clearButton
-            id="selections-example"
-            labelKey="name"
-            options={workers.map((item) => item.username)}
-            onChange={handleChangeCurrentWorker}
-            placeholder="Выберите сотрудника..."
-          />
-        </Container>
-      </div>
+      {isAdmin() ? (
+        <div style={{marginTop: "130px"}}>
+          <Container className="mt--7 col-lg-6">
+            <Typeahead
+              clearButton
+              id="selections-example"
+              labelKey="name"
+              options={workers.map((item) => item.username)}
+              onChange={handleChangeCurrentWorker}
+              placeholder="Выберите сотрудника..."
+            />
+          </Container>
+        </div>
+      ) : null}
+
       {isAdmin() ? (
         /* Table */
         <Container className="mt-3" fluid>
@@ -310,7 +313,7 @@ const Extracts = () => {
                       </Col>
                     ))
                   ) : (
-                    <p>Нет данных для отображения</p>
+                    <p className='pl-5'>Выберите сотрудника для отображения информации</p>
                   )}
                 </Row>
                 <PaginationForTable
@@ -351,7 +354,7 @@ const Extracts = () => {
                 </Col>
               ))
             ) : (
-              <p>Нет данных для отображения</p>
+              <p className='pl-5'>Выберите сотрудника для отображения информации</p>
             )}
           </Row>
           <PaginationForTable
