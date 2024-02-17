@@ -299,7 +299,6 @@ const Accounting = () => {
                       // Проверка изменения номера недели
                       const isWeekChange = index === 0 || item.weekNumber !== array[index - 1].weekNumber;
 
-
                       return (
                         <React.Fragment key={item.id}>
                           {isWeekChange && (

@@ -61,6 +61,11 @@ class ExtractsGetTotalPagesSerializer(serializers.Serializer):
     total_pages = serializers.IntegerField()
 
 
+class ExtractsGetTotalPagesUserSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(required=False)
+    total_pages = serializers.IntegerField()
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -79,4 +84,3 @@ class GetStatsSerializer(serializers.Serializer):
     total_amount_commission_for_deposits = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total_debt = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
     total = serializers.DecimalField(read_only=True, max_digits=20, decimal_places=2)
-

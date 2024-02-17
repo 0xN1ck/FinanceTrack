@@ -14,7 +14,8 @@ urlpatterns = [
     path('deduction/worker/<int:user>/get-total-pages/', DeductionsGetTotalPagesSerializer.as_view()),  # test
     path('assignee/', AssigneesListCreate.as_view()),
     path('extracts/', ExtractsCreateList.as_view()),
-    path('extracts/get-total-pages/', ExtractsGetTotalPagesSerializer.as_view()),  # test
+    path('extracts/get-total-pages/', ExtractsGetTotalPages.as_view()),  # test
+    path('extracts/get-total-pages/<int:user_id>/', UserExtractsTotalPagesUser.as_view()),  # test
     path('extract/<int:pk>/', ExtractsRetrieveUpdateDestroy.as_view()),
     path('extract/worker/<int:user>/', ExtractsForWorkerList.as_view()),
     path('statistics/', GetStatsAll.as_view(), name='user-statistics'),

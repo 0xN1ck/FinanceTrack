@@ -1,7 +1,7 @@
 import {api} from "./authActions";
 
-export const getExtractsByWorkerId = (workerId) => {
-  return api.get(`/extract/worker/${workerId}`)
+export const getExtractsByWorkerId = (workerId, page, pageSize) => {
+  return api.get(`/extract/worker/${workerId}?page=${page}&page_size=${pageSize}`)
     .then(response => response.data)
     .catch(error => {
       console.log(error);
@@ -20,6 +20,15 @@ export const getExtracts = (page, pageSize) => {
 
 export const getTotalPagesForExtracts = () => {
   return api.get(`/extracts/get-total-pages/`)
+    .then(response => response.data)
+    .catch(error => {
+      console.log(error);
+      throw error;
+    });
+};
+
+export const getTotalPagesForExtractsUser = (user_id) => {
+  return api.get(`/extracts/get-total-pages/${user_id}/`)
     .then(response => response.data)
     .catch(error => {
       console.log(error);

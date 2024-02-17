@@ -73,7 +73,7 @@ class ExtractsCreateList(generics.ListCreateAPIView):
     queryset = Extracts.objects.all().order_by(F('id')).reverse()
     serializer_class = ExtractsSerializer
     pagination_class = PageNumberPagination
-    pagination_class.page_size = 10
+    pagination_class.page_size = 12
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -83,12 +83,23 @@ class ExtractsCreateList(generics.ListCreateAPIView):
         return queryset
 
 
-class ExtractsGetTotalPagesSerializer(generics.RetrieveAPIView):
+class ExtractsGetTotalPages(generics.RetrieveAPIView):
     serializer_class = ExtractsGetTotalPagesSerializer
-    page_size = 10
+    page_size = 12
 
     def get_object(self):
         total_items = Extracts.objects.count()
+        total_pages = (total_items + self.page_size - 1) // self.page_size
+        return {'total_pages': total_pages}
+
+
+class UserExtractsTotalPagesUser(generics.RetrieveAPIView):
+    serializer_class = ExtractsGetTotalPagesUserSerializer
+    page_size = 12
+
+    def get_object(self):
+        user_id = int(self.kwargs.get('user_id'))  # Получаем идентификатор пользователя из URL
+        total_items = Extracts.objects.filter(user_id=user_id).count()
         total_pages = (total_items + self.page_size - 1) // self.page_size
         return {'total_pages': total_pages}
 
@@ -155,10 +166,16 @@ class ExtractsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 class ExtractsForWorkerList(generics.ListAPIView):
     serializer_class = ExtractsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    pagination_class = PageNumberPagination
+    pagination_class.page_size = 12
 
     def get_queryset(self):
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            self.pagination_class.page_size = int(page_size)
         worker_id = self.kwargs['user']
-        return Extracts.objects.filter(user_id=worker_id).order_by('-id')
+        queryset = Extracts.objects.filter(user_id=worker_id).order_by('-id')
+        return queryset
 
 
 class ExtractsViewSet(viewsets.GenericViewSet):

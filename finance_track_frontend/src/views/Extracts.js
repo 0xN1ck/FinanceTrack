@@ -7,11 +7,6 @@ import {
   Button,
   Card,
   CardHeader,
-  Table,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   CardBody,
   CardTitle,
   CardText,
@@ -26,6 +21,7 @@ import {isAdmin} from "../actions/authActions";
 import {
   getExtracts,
   getTotalPagesForExtracts,
+  getTotalPagesForExtractsUser,
   getExtractsByWorkerId,
   deleteExtracts,
   createExtracts,
@@ -45,7 +41,7 @@ const Extracts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10;
+  const pageSize = 12;
   const [totalPages, setTotalPages] = useState(0);
   const [modalOpen, setModalOpen] = useState(false); // Состояние модального окна
   const [modalData, setModalData] = useState(null); // Данные для модального окна
@@ -74,9 +70,16 @@ const Extracts = () => {
   useEffect(() => {
     if (!isAdmin()) {
       const dataUser = getDataOfUser();
-      getExtractsByWorkerId(dataUser.id)
+      getTotalPagesForExtractsUser(dataUser.id)
+        .then((response) => {
+          setTotalPages(response.total_pages);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      getExtractsByWorkerId(dataUser.id, 1, pageSize)
         .then(response => {
-          setDataForUser(response);
+          setDataForUser(response.results);
           setUpdateHeader(prevState => !prevState);
         })
         .catch(error => {
@@ -162,8 +165,19 @@ const Extracts = () => {
     setCurrentPage(page);
     getExtracts(page + 1, pageSize)
       .then((response) => {
-        console.log(response);
         setData(response.results);
+        setUpdateHeader(prevState => !prevState);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handlePageChangeUser = (page) => {
+    setCurrentPage(page);
+    getExtractsByWorkerId(getDataOfUser().id, page + 1, pageSize)
+      .then((response) => {
+        setDataForUser(response.results);
         setUpdateHeader(prevState => !prevState);
       })
       .catch((error) => {
@@ -202,65 +216,53 @@ const Extracts = () => {
                     </Col>
                   </Row>
                 </CardHeader>
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">Начальная дата</th>
-                    <th scope="col">Конечная дата</th>
-                    <th scope="col"/>
-                  </tr>
-                  </thead>
-                  <tbody>
+                <Row className="mt-1 pl-3 pr-3">
                   {data && data.length > 0 ? (
-                    data
-                      .sort((a, b) => b.id - a.id)
-                      .map((item) => (
-                        <tr key={item.id}>
-                          <td>{item.user.username}</td>
-                          <td>
-                            {moment(item.date_start)
-                              .locale("ru")
-                              .format("D MMMM YYYY [г.]")}
-                          </td>
-                          <td>
-                            {moment(item.date_end)
-                              .locale("ru")
-                              .format("D MMMM YYYY [г.]")}
-                          </td>
-                          <td className="text-right">
-                            <UncontrolledDropdown>
-                              <DropdownToggle
-                                className="btn-icon-only text-light"
-                                role="button"
-                                size="sm"
-                                color=""
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                <i className="fas fa-ellipsis-v"/>
-                              </DropdownToggle>
-                              <DropdownMenu
-                                className="dropdown-menu-arrow"
-                                right
-                              >
-                                <DropdownItem onClick={() => handleEdit(item)}>
+                    data.map((item) => (
+                      <Col key={item.id} xs={12} sm={6} md={3} className="mb-3">
+                        <Card style={{width: "100%"}}>
+                          <CardBody>
+                            <CardTitle tag="h5">{item.user.username}</CardTitle>
+                            <CardText>
+                              Начальная дата:{" "}
+                              {moment(item.date_start).locale("ru").format("D MMMM YYYY [г.]")}
+                            </CardText>
+                            <CardText>
+                              Конечная дата:{" "}
+                              {moment(item.date_end).locale("ru").format("D MMMM YYYY [г.]")}
+                            </CardText>
+                            <Row className="d-flex justify-content-start">
+                              <Col xs="auto">
+                                <Button
+                                  color="primary"
+                                  href="#pablo"
+                                  size="sm"
+                                  onClick={() => handleEdit(item)}
+                                  className="mb-2"
+                                >
                                   Просмотр
-                                </DropdownItem>
-                                <DropdownItem onClick={() => handleDelete(item.id)}>
+                                </Button>
+                              </Col>
+                              <Col xs="auto">
+                                <Button
+                                  color="warning"
+                                  href="#pablo"
+                                  size="sm"
+                                  onClick={() => handleDelete(item.id)}
+                                >
                                   Удалить
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </td>
-                        </tr>
-                      ))
+                                </Button>
+                              </Col>
+                            </Row>
+
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    ))
                   ) : (
-                    <tr>
-                      <td colSpan="8">Нет данных для отображения</td>
-                    </tr>
+                    <p>Нет данных для отображения</p>
                   )}
-                  </tbody>
-                </Table>
+                </Row>
                 <PaginationForTable
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -302,6 +304,11 @@ const Extracts = () => {
               <p>Нет данных для отображения</p>
             )}
           </Row>
+          <PaginationForTable
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChangeUser}
+          />
         </Container>
       )}
 
